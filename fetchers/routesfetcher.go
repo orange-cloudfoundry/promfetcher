@@ -9,21 +9,24 @@ import (
 	"time"
 
 	"github.com/orange-cloudfoundry/promfetcher/config"
+	"github.com/orange-cloudfoundry/promfetcher/metrics"
 	"github.com/orange-cloudfoundry/promfetcher/models"
 	log "github.com/sirupsen/logrus"
 )
 
 type RoutesFetcher struct {
-	mu         sync.Mutex
-	routes     *models.Routes
-	httpClient *http.Client
+	mu              sync.Mutex
+	routes          *models.Routes
+	httpClient      *http.Client
+	lastSuccessTime time.Time
 }
 
 func NewRoutesFetcher(confGorouter config.GorouterConfig) *RoutesFetcher {
 	rts := make(models.Routes)
 	return &RoutesFetcher{
-		mu:     sync.Mutex{},
-		routes: &rts,
+		mu:              sync.Mutex{},
+		routes:          &rts,
+		lastSuccessTime: time.Now(),
 		httpClient: &http.Client{
 			Transport: NewFetcherTransport(confGorouter, &http.Transport{
 				Proxy: http.ProxyFromEnvironment,
@@ -50,7 +53,13 @@ func (f RoutesFetcher) Run() {
 			err := f.updateRoutes()
 			if err != nil {
 				entry.Warnf("Error updating routes: %s", err.Error())
+				metrics.ScrapeRouteFailedTotal.With(map[string]string{}).Inc()
+			} else {
+				f.mu.Lock()
+				f.lastSuccessTime = time.Now()
+				f.mu.Unlock()
 			}
+			metrics.LatestScrapeRoute.With(map[string]string{}).Set(time.Now().Sub(f.lastSuccessTime).Seconds())
 			time.Sleep(30 * time.Second)
 		}
 	}()
@@ -62,15 +71,18 @@ func (f *RoutesFetcher) updateRoutes() error {
 		return err
 	}
 	defer resp.Body.Close()
+
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
+
 	var routes models.Routes
 	err = json.Unmarshal(b, &routes)
 	if err != nil {
 		return err
 	}
+
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	*f.routes = routes

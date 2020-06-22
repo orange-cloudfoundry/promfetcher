@@ -51,6 +51,7 @@ func main() {
 		userdocs.NewUserDoc(c.BaseURL),
 	)
 
+	log.Info("Init route fetcher ...")
 	routeFetcher.Run()
 	listenAddr := fmt.Sprintf("0.0.0.0:%d", c.Port)
 	if !c.EnableSSL {

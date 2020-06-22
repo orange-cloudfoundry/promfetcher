@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/orange-cloudfoundry/promfetcher/fetchers"
 	"github.com/orange-cloudfoundry/promfetcher/userdocs"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type Api struct {
@@ -29,4 +30,5 @@ func Register(rtr *mux.Router, metFetcher *fetchers.MetricsFetcher, broker *Brok
 	boxAsset := packr.New("userdocs_assets", "../userdocs/assets")
 	rtr.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(boxAsset)))
 	rtr.Handle("/doc", userdocs)
+	rtr.Handle("/metrics", promhttp.Handler())
 }
