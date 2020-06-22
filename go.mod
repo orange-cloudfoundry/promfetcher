@@ -12,7 +12,7 @@ require (
 	github.com/karrick/godirwalk v1.15.6 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/pivotal-cf/brokerapi/v7 v7.2.0
-	github.com/pkg/errors v0.9.1
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.0.0
 	github.com/prometheus/client_model v0.2.0
 	github.com/prometheus/common v0.10.0
