@@ -52,7 +52,7 @@ func (s Scraper) Scrape(route models.Route) (io.ReadCloser, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusNotFound || resp.StatusCode == http.StatusBadRequest {
+		if resp.StatusCode >= 400 && resp.StatusCode <= 499 {
 			return nil, errors.ErrNoEndpointFound(
 				fmt.Sprintf(
 					"%s/%s/%s",
