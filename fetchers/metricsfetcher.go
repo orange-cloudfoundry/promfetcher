@@ -1,0 +1,187 @@
+package fetchers
+
+import (
+	"sync"
+
+	"github.com/orange-cloudfoundry/promfetcher/errors"
+	"github.com/orange-cloudfoundry/promfetcher/models"
+	"github.com/orange-cloudfoundry/promfetcher/scrapers"
+	"github.com/prometheus/client_golang/prometheus"
+	dto "github.com/prometheus/client_model/go"
+	"github.com/prometheus/common/expfmt"
+	log "github.com/sirupsen/logrus"
+)
+
+func ptrString(v string) *string {
+	return &v
+}
+
+type MetricsFetcher struct {
+	scraper       *scrapers.Scraper
+	routesFetcher *RoutesFetcher
+	parser        *expfmt.TextParser
+}
+
+func NewMetricsFetcher(scraper *scrapers.Scraper, routesFetcher *RoutesFetcher) *MetricsFetcher {
+	return &MetricsFetcher{
+		scraper:       scraper,
+		routesFetcher: routesFetcher,
+		parser:        &expfmt.TextParser{},
+	}
+}
+
+func (f MetricsFetcher) Metrics(appIdOrPath string) (map[string]*dto.MetricFamily, error) {
+
+	routes := f.routesFetcher.Routes().Find(appIdOrPath)
+	if len(routes) == 0 {
+		return make(map[string]*dto.MetricFamily), errors.ErrNoAppFound(appIdOrPath)
+	}
+	jobs := make(chan models.Route, len(routes))
+	errFetch := &errors.ErrFetch{}
+	wg := &sync.WaitGroup{}
+
+	muWrite := sync.Mutex{}
+	metricsUnmerged := make([]map[string]*dto.MetricFamily, 0)
+
+	wg.Add(len(routes))
+	for w := 1; w <= 5; w++ {
+		go func(jobs <-chan models.Route, errFetch *errors.ErrFetch) {
+			for j := range jobs {
+				newMetrics, err := f.Metric(j)
+				if err != nil {
+					if errF, ok := err.(*errors.ErrFetch); ok {
+						muWrite.Lock()
+						*errFetch = *errF
+						muWrite.Unlock()
+						wg.Done()
+						continue
+					}
+					log.Warnf("Cannot get metric for instance %s for instance id %s", j.Address, j.Tags.InstanceID)
+					newMetrics = f.scrapeError(j, err)
+				}
+				muWrite.Lock()
+				metricsUnmerged = append(metricsUnmerged, newMetrics)
+				muWrite.Unlock()
+				wg.Done()
+			}
+		}(jobs, errFetch)
+	}
+	for _, route := range routes {
+		jobs <- route
+	}
+	wg.Wait()
+	close(jobs)
+	if errFetch.Code != 0 {
+		return make(map[string]*dto.MetricFamily), errFetch
+	}
+
+	if len(metricsUnmerged) == 0 {
+		return make(map[string]*dto.MetricFamily), nil
+	}
+
+	base := metricsUnmerged[0]
+	for _, metricKV := range metricsUnmerged[1:] {
+		for k, metricFamily := range metricKV {
+			baseMetricFamily, ok := base[k]
+			if !ok {
+				base[k] = metricFamily
+				continue
+			}
+			for _, metric := range metricFamily.Metric {
+				baseMetricFamily.Metric = append(baseMetricFamily.Metric, metric)
+			}
+		}
+	}
+	return base, nil
+}
+
+func (f MetricsFetcher) Metric(route models.Route) (map[string]*dto.MetricFamily, error) {
+	reader, err := f.scraper.Scrape(route)
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
+
+	metricsGroup, err := f.parser.TextToMetricFamilies(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, metricGroup := range metricsGroup {
+		for _, metric := range metricGroup.Metric {
+
+			metric.Label = append(metric.Label,
+				&dto.LabelPair{
+					Name:  ptrString("organization_id"),
+					Value: ptrString(route.Tags.OrganizationID),
+				},
+				&dto.LabelPair{
+					Name:  ptrString("space_id"),
+					Value: ptrString(route.Tags.SpaceID),
+				},
+				&dto.LabelPair{
+					Name:  ptrString("app_id"),
+					Value: ptrString(route.Tags.AppID),
+				},
+				&dto.LabelPair{
+					Name:  ptrString("organization_name"),
+					Value: ptrString(route.Tags.OrganizationName),
+				},
+				&dto.LabelPair{
+					Name:  ptrString("space_name"),
+					Value: ptrString(route.Tags.SpaceName),
+				},
+				&dto.LabelPair{
+					Name:  ptrString("app_name"),
+					Value: ptrString(route.Tags.AppName),
+				},
+				&dto.LabelPair{
+					Name:  ptrString("index"),
+					Value: ptrString(route.Tags.InstanceID),
+				},
+				&dto.LabelPair{
+					Name:  ptrString("instance_id"),
+					Value: ptrString(route.Tags.InstanceID),
+				},
+				&dto.LabelPair{
+					Name:  ptrString("instance"),
+					Value: ptrString(route.Address),
+				},
+			)
+		}
+	}
+	return metricsGroup, nil
+}
+
+func (f MetricsFetcher) scrapeError(route models.Route, err error) map[string]*dto.MetricFamily {
+	name := "promfetcher_scrape_error"
+	help := "Promfetcher scrap error on your instance"
+	metric := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: name,
+		Help: help,
+		ConstLabels: prometheus.Labels{
+			"organization_id":   route.Tags.OrganizationID,
+			"space_id":          route.Tags.SpaceID,
+			"app_id":            route.Tags.AppID,
+			"organization_name": route.Tags.OrganizationName,
+			"space_name":        route.Tags.SpaceName,
+			"app_name":          route.Tags.AppName,
+			"index":             route.Tags.InstanceID,
+			"instance_id":       route.Tags.InstanceID,
+			"instance":          route.Address,
+			"error":             err.Error(),
+		},
+	})
+	metric.Inc()
+	var dtoMetric dto.Metric
+	metric.Write(&dtoMetric)
+	metricType := dto.MetricType_COUNTER
+	return map[string]*dto.MetricFamily{
+		"promfetcher_scrape_error": &dto.MetricFamily{
+			Name:   ptrString(name),
+			Help:   ptrString(help),
+			Type:   &metricType,
+			Metric: []*dto.Metric{&dtoMetric},
+		},
+	}
+}

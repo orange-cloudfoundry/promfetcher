@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Promfetcher - Doc</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="/assets/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="/assets/css/prism.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="/assets/css/custom.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+<body>
+<nav class="brand-orange" role="navigation">
+  <div class="nav-wrapper container">
+    <a id="logo-container" href="#" class="brand-logo">Promfetcher</a>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <div class="container scrollspy" id="what-is-logservice">
+    <div class="section">
+      <div class="row">
+        <h1>What is Promfetcher ?</h1>
+      </div>
+      <div class="row">
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center light-blue-text"><i class="material-icons">flash_on</i></h2>
+            <h5 class="center">Retrieve and merge your prometheus from all app instances </h5>
+
+            <p class="light">This was made for let you retrieve and merge with relabelling all your prometheus metrics
+              from all your app instances</p>
+          </div>
+        </div>
+
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center light-blue-text"><i class="material-icons">group</i></h2>
+            <h5 class="center">User Experience Focused</h5>
+
+            <p class="light">You can retrieve all your app instance without using the broker by simply call endpoint
+              <a href="{{.BaseURL}}/v1/apps/[org_name]/[space_name]/[app_name]/metrics">
+                  {{.BaseURL}}/v1/apps/[org_name]/[space_name]/[app_name]/metrics
+              </a>
+              if you have your metrics available on <b>/metrics</b> endpoint on your app.
+            </p>
+          </div>
+        </div>
+
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center light-blue-text"><i class="material-icons">settings</i></h2>
+            <h5 class="center">Easy to work with</h5>
+
+            <p class="light">
+              You can set your own endpoint by using associated service broker.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <br><br>
+  </div>
+
+  <div class="container scrollspy" id="how-to-use">
+    <div class="section">
+      <div class="row">
+        <h1>How to use ?</h1>
+      </div>
+      <div class="row">
+          {{ parse "how-to-use.md" . | markdown }}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col hide-on-small-only m3 l2 spy-toc">
+  <ul class="section table-of-contents">
+    <li><a href="#what-is-logservice">What is logservice ?</a></li>
+    <li><a href="#how-to-use">How to use ?</a></li>
+  </ul>
+</div>
+
+<footer class="page-footer brand-blue">
+  <div class="footer-copyright">
+    <div class="container">
+      Promfetcher has been made by <a class="brand-orange-text" href="https://orange.fr">Orange</a>.
+    </div>
+  </div>
+</footer>
+
+
+<!--  Scripts-->
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/js/materialize.min.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script src="/assets/js/custom.js"></script>
+
+</body>
+</html>
