@@ -109,7 +109,12 @@ func (f MetricsFetcher) Metric(route models.Route) (map[string]*dto.MetricFamily
 
 	for _, metricGroup := range metricsGroup {
 		for _, metric := range metricGroup.Metric {
-
+			metric.Label = f.cleanMetricLabels(
+				metric.Label,
+				"organization_id", "space_id", "app_id",
+				"organization_name", "space_name", "app_name",
+				"index", "instance_id", "instance",
+			)
 			metric.Label = append(metric.Label,
 				&dto.LabelPair{
 					Name:  ptrString("organization_id"),
@@ -151,6 +156,23 @@ func (f MetricsFetcher) Metric(route models.Route) (map[string]*dto.MetricFamily
 		}
 	}
 	return metricsGroup, nil
+}
+
+func (f MetricsFetcher) cleanMetricLabels(labels []*dto.LabelPair, names ...string) []*dto.LabelPair {
+	finalLabels := make([]*dto.LabelPair, 0)
+	for _, label := range labels {
+		toAdd := true
+		for _, name := range names {
+			if label.Name != nil && *label.Name == name {
+				toAdd = false
+				break
+			}
+		}
+		if toAdd {
+			finalLabels = append(finalLabels, label)
+		}
+	}
+	return labels
 }
 
 func (f MetricsFetcher) scrapeError(route models.Route, err error) map[string]*dto.MetricFamily {
