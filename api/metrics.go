@@ -10,7 +10,15 @@ import (
 )
 
 func (a Api) metrics(w http.ResponseWriter, req *http.Request) {
-	appIdOrPath := mux.Vars(req)["appIdOrPath"]
+	appIdOrPath, ok := mux.Vars(req)["appIdOrPath"]
+	if !ok {
+		appIdOrPath = req.URL.Query().Get("app")
+	}
+	if appIdOrPath == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(fmt.Sprintf("%d %s: You must set app id or path", http.StatusBadRequest, http.StatusText(http.StatusBadRequest))))
+		return
+	}
 	metrics, err := a.metFetcher.Metrics(appIdOrPath)
 	if err != nil {
 		if errFetch, ok := err.(*errors.ErrFetch); ok {
