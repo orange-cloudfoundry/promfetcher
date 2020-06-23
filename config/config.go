@@ -105,11 +105,12 @@ type Config struct {
 	MaxIdleConns        int  `yaml:"max_idle_conns,omitempty"`
 	MaxIdleConnsPerHost int  `yaml:"max_idle_conns_per_host,omitempty"`
 
-	DbConn        string   `yaml:"db_conn"`
-	SQLCnxMaxIdle int      `yaml:"sql_cnx_max_idle"`
-	SQLCnxMaxOpen int      `yaml:"sql_cnx_max_open"`
-	SQLCnxMaxLife string   `yaml:"sql_cnx_max_life"`
-	DB            *gorm.DB `yaml:"-"`
+	DbConn                string   `yaml:"db_conn"`
+	SQLCnxMaxIdle         int      `yaml:"sql_cnx_max_idle"`
+	SQLCnxMaxOpen         int      `yaml:"sql_cnx_max_open"`
+	SQLCnxMaxLife         string   `yaml:"sql_cnx_max_life"`
+	NotExitWhenConnFailed bool     `yaml:"not_exit_when_conn_failed"`
+	DB                    *gorm.DB `yaml:"-"`
 
 	BaseURL string `yaml:"base_url"`
 }
@@ -168,6 +169,9 @@ func (c *Config) Process() error {
 }
 
 func (c *Config) gormDB() error {
+	if c.DbConn == "" {
+		return nil
+	}
 	u, err := url.Parse(c.DbConn)
 	if err != nil {
 		return err

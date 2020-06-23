@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/jinzhu/gorm"
 	"github.com/orange-cloudfoundry/promfetcher/api"
 	"github.com/orange-cloudfoundry/promfetcher/clients"
 	"github.com/orange-cloudfoundry/promfetcher/config"
@@ -52,6 +54,11 @@ func main() {
 
 	log.Info("Init route fetcher ...")
 	routeFetcher.Run()
+
+	if !c.NotExitWhenConnFailed {
+		go checkDbConnection(c.DB)
+	}
+
 	listenAddr := fmt.Sprintf("0.0.0.0:%d", c.Port)
 	if !c.EnableSSL {
 		log.Infof("Listen %s without tls ...", listenAddr)
@@ -93,4 +100,18 @@ func serveHTTPS(c *config.Config, handler http.Handler) error {
 	defer tlsListener.Close()
 
 	return http.Serve(tlsListener, handler)
+}
+
+func checkDbConnection(db *gorm.DB) {
+	if db == nil {
+		return
+	}
+	for {
+		err := db.DB().Ping()
+		if err != nil {
+			db.Close()
+			log.Fatalf("Error when pinging database: %s", err.Error())
+		}
+		time.Sleep(5 * time.Minute)
+	}
 }

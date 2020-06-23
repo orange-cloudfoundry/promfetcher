@@ -31,10 +31,12 @@ func (s Scraper) Scrape(route models.Route) (io.ReadCloser, error) {
 		scheme = "https"
 	}
 	endpoint := "/metrics"
-	var appEndpoint models.AppEndpoint
-	s.db.First(&appEndpoint, "app_guid = ?", route.Tags.AppID)
-	if appEndpoint.GUID != "" {
-		endpoint = appEndpoint.Endpoint
+	if s.db != nil {
+		var appEndpoint models.AppEndpoint
+		s.db.First(&appEndpoint, "app_guid = ?", route.Tags.AppID)
+		if appEndpoint.GUID != "" {
+			endpoint = appEndpoint.Endpoint
+		}
 	}
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s://%s%s", scheme, route.Address, endpoint), nil)

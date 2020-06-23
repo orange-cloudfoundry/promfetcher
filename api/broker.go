@@ -89,7 +89,7 @@ func (b Broker) GetInstance(ctx context.Context, instanceID string) (domain.GetI
 }
 
 func (b Broker) Update(ctx context.Context, instanceID string, details domain.UpdateDetails, asyncAllowed bool) (domain.UpdateServiceSpec, error) {
-	panic("implement me")
+	return domain.UpdateServiceSpec{}, nil
 }
 
 func (b Broker) LastOperation(ctx context.Context, instanceID string, details domain.PollDetails) (domain.LastOperation, error) {
@@ -97,6 +97,9 @@ func (b Broker) LastOperation(ctx context.Context, instanceID string, details do
 }
 
 func (b Broker) Bind(ctx context.Context, instanceID, bindingID string, details domain.BindDetails, asyncAllowed bool) (domain.Binding, error) {
+	if b.db == nil {
+		return domain.Binding{}, fmt.Errorf("No db set broker unusable")
+	}
 	var params BrokerParams
 	err := json.Unmarshal(details.RawParameters, &params)
 	if err != nil && len(details.RawParameters) > 0 {
@@ -112,22 +115,34 @@ func (b Broker) Bind(ctx context.Context, instanceID, bindingID string, details 
 		return domain.Binding{}, nil
 	}
 
-	b.db.Create(&models.AppEndpoint{
+	err = b.db.Create(&models.AppEndpoint{
 		GUID:     bindingID,
 		AppGUID:  details.AppGUID,
 		Endpoint: params.Endpoint,
-	})
+	}).Error
+	if err != nil {
+		return domain.Binding{}, fmt.Errorf("Error when getting creating app entry in db: %s", err.Error())
+	}
 	return domain.Binding{}, nil
 }
 
 func (b Broker) Unbind(ctx context.Context, instanceID, bindingID string, details domain.UnbindDetails, asyncAllowed bool) (domain.UnbindSpec, error) {
+	if b.db == nil {
+		return domain.UnbindSpec{}, nil
+	}
 	b.db.Delete(models.AppEndpoint{}, "guid = ?", bindingID)
 	return domain.UnbindSpec{}, nil
 }
 
 func (b Broker) GetBinding(ctx context.Context, instanceID, bindingID string) (domain.GetBindingSpec, error) {
 	var appEndpoint models.AppEndpoint
-	b.db.First(&appEndpoint, "guid = ?", bindingID)
+	if b.db == nil {
+		return domain.GetBindingSpec{}, fmt.Errorf("No db set broker unusable")
+	}
+	err := b.db.First(&appEndpoint, "guid = ?", bindingID).Error
+	if err != nil {
+		return domain.GetBindingSpec{}, fmt.Errorf("Error when getting app in db: %s", err.Error())
+	}
 	if appEndpoint.GUID == "" {
 		return domain.GetBindingSpec{
 			Credentials: map[string]string{},
