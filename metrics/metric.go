@@ -8,28 +8,28 @@ import (
 var (
 	MetricFetchFailedTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "metric_fetch_failed_total",
+			Name: "promfetch_metric_fetch_failed_total",
 			Help: "Number of non fetched metrics without be an normal error.",
 		},
 		[]string{"organization_id", "space_id", "app_id", "organization_name", "space_name", "app_name", "index", "instance_id"},
 	)
 	MetricFetchSuccessTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "metric_fetch_success_total",
+			Name: "promfetch_metric_fetch_success_total",
 			Help: "Number of fetched metrics succeeded for an app (app instance call are added).",
 		},
 		[]string{"organization_id", "space_id", "app_id", "organization_name", "space_name", "app_name"},
 	)
 	LatestScrapeRoute = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "latest_time_scrape_route",
+			Name: "promfetch_latest_time_scrape_route",
 			Help: "Last time that route has been scraped in seconds.",
 		},
 		[]string{},
 	)
 	ScrapeRouteFailedTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "scrape_route_failed_total",
+			Name: "promfetch_scrape_route_failed_total",
 			Help: "Number of non fetched metrics without be an normal error.",
 		},
 		[]string{},

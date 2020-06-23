@@ -53,7 +53,7 @@ You should deploy it with boshrelease associated with: https://github.com/orange
 ## Metrics
 
 Promfetcher expose metrics on `/metrics`:
-- `metric_fetch_failed_total`: Number of non fetched metrics without be an normal error.
-- `metric_fetch_success_total`: Number of fetched metrics succeeded for an app (app instance call are summed).
-- `latest_time_scrape_route`: Last time that route has been scraped in seconds.
-- `scrape_route_failed_total`: Number of non fetched metrics without be an normal error.
+- `promfetch_metric_fetch_failed_total`: Number of non fetched metrics without be an normal error.
+- `promfetch_metric_fetch_success_total`: Number of fetched metrics succeeded for an app (app instance call are summed).
+- `promfetch_latest_time_scrape_route`: Last time that route has been scraped in seconds.
+- `promfetch_scrape_route_failed_total`: Number of non fetched metrics without be an normal error.
