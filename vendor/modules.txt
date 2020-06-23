@@ -47,8 +47,6 @@ github.com/jinzhu/inflection
 github.com/karrick/godirwalk
 # github.com/konsorten/go-windows-terminal-sequences v1.0.3
 github.com/konsorten/go-windows-terminal-sequences
-# github.com/kr/pretty v0.1.0
-## explicit
 # github.com/lib/pq v1.1.1
 github.com/lib/pq
 github.com/lib/pq/hstore
@@ -76,7 +74,6 @@ github.com/pivotal-cf/brokerapi/v7/handlers
 github.com/pivotal-cf/brokerapi/v7/middlewares
 github.com/pivotal-cf/brokerapi/v7/utils
 # github.com/pkg/errors v0.9.1
-## explicit
 github.com/pkg/errors
 # github.com/prometheus/client_golang v1.0.0
 ## explicit
@@ -104,20 +101,6 @@ github.com/shurcooL/sanitized_anchor_name
 # github.com/sirupsen/logrus v1.6.0
 ## explicit
 github.com/sirupsen/logrus
-# github.com/spf13/cobra v1.0.0
-## explicit
-# github.com/spf13/pflag v1.0.5
-## explicit
-# github.com/stretchr/testify v1.5.1
-## explicit
-# github.com/uber-go/atomic v1.1.0
-## explicit
-github.com/uber-go/atomic
-# github.com/uber-go/zap v0.0.0-20161222040304-a5783ee4b216
-## explicit
-github.com/uber-go/zap
-# go.uber.org/atomic v1.6.0
-## explicit
 # golang.org/x/crypto v0.0.0-20200604202706-70a84ac30bf9
 ## explicit
 golang.org/x/crypto/ssh/terminal
@@ -128,8 +111,6 @@ golang.org/x/crypto/ssh/terminal
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/tools v0.0.0-20200622150058-fcc5b64fe1f1
-## explicit
 # google.golang.org/protobuf v1.23.0
 google.golang.org/protobuf/encoding/prototext
 google.golang.org/protobuf/encoding/protowire
@@ -161,8 +142,6 @@ google.golang.org/protobuf/runtime/protoimpl
 google.golang.org/protobuf/types/known/anypb
 google.golang.org/protobuf/types/known/durationpb
 google.golang.org/protobuf/types/known/timestamppb
-# gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127
-## explicit
 # gopkg.in/yaml.v2 v2.3.0
 ## explicit
 gopkg.in/yaml.v2
