@@ -50,3 +50,10 @@ When asking metrics for an app, promfetcher will call async all app instance (ga
 
 You should deploy it with boshrelease associated with: https://github.com/orange-cloudfoundry/promfetcher-release
 
+## Metrics
+
+Promfetcher expose metrics on `/metrics`:
+- `metric_fetch_failed_total`: Number of non fetched metrics without be an normal error.
+- `metric_fetch_success_total`: Number of fetched metrics succeeded for an app (app instance call are summed).
+- `latest_time_scrape_route`: Last time that route has been scraped in seconds.
+- `scrape_route_failed_total`: Number of non fetched metrics without be an normal error.
