@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/orange-cloudfoundry/promfetcher/errors"
+	"github.com/orange-cloudfoundry/promfetcher/metrics"
 	"github.com/orange-cloudfoundry/promfetcher/models"
 	"github.com/orange-cloudfoundry/promfetcher/scrapers"
 	"github.com/prometheus/client_golang/prometheus"
@@ -58,6 +59,7 @@ func (f MetricsFetcher) Metrics(appIdOrPath string) (map[string]*dto.MetricFamil
 					}
 					log.Warnf("Cannot get metric for instance %s for instance id %s", j.Address, j.Tags.InstanceID)
 					newMetrics = f.scrapeError(j, err)
+					metrics.MetricFetchFailedTotal.With(metrics.RouteToLabel(j)).Inc()
 				}
 				muWrite.Lock()
 				metricsUnmerged = append(metricsUnmerged, newMetrics)
