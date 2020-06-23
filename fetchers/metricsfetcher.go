@@ -60,6 +60,8 @@ func (f MetricsFetcher) Metrics(appIdOrPath string) (map[string]*dto.MetricFamil
 					log.Warnf("Cannot get metric for instance %s for instance id %s", j.Address, j.Tags.InstanceID)
 					newMetrics = f.scrapeError(j, err)
 					metrics.MetricFetchFailedTotal.With(metrics.RouteToLabel(j)).Inc()
+				} else {
+					metrics.MetricFetchSuccessTotal.With(metrics.RouteToLabelNoInstance(j)).Inc()
 				}
 				muWrite.Lock()
 				metricsUnmerged = append(metricsUnmerged, newMetrics)
