@@ -11,7 +11,7 @@ var (
 			Name: "metric_fetch_failed_total",
 			Help: "Number of non fetched metrics without be an normal error.",
 		},
-		[]string{"organization_id", "space_id", "app_id", "organization_name", "space_name", "app_name", "index", "instance_id", "instance"},
+		[]string{"organization_id", "space_id", "app_id", "organization_name", "space_name", "app_name", "index", "instance_id"},
 	)
 	LatestScrapeRoute = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -39,7 +39,6 @@ func RouteToLabel(route models.Route) prometheus.Labels {
 		"app_name":          route.Tags.AppName,
 		"index":             route.Tags.InstanceID,
 		"instance_id":       route.Tags.InstanceID,
-		"instance":          route.Address,
 	}
 }
 
