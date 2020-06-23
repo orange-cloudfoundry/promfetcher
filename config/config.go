@@ -122,7 +122,6 @@ var defaultConfig = Config{
 	DisableKeepAlives:   true,
 	MaxIdleConns:        100,
 	MaxIdleConnsPerHost: 2,
-	DbConn:              "sqlite:///promfetcher.db",
 	SQLCnxMaxIdle:       5,
 	SQLCnxMaxOpen:       10,
 	SQLCnxMaxLife:       "1h",
