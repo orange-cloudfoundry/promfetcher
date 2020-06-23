@@ -16,7 +16,6 @@ import (
 	"github.com/orange-cloudfoundry/promfetcher/scrapers"
 	"github.com/orange-cloudfoundry/promfetcher/userdocs"
 	log "github.com/sirupsen/logrus"
-	"github.com/uber-go/zap"
 )
 
 func main() {
@@ -26,13 +25,13 @@ func main() {
 
 	c, err := config.DefaultConfig()
 	if err != nil {
-		log.Fatal("Error loading config:", zap.Error(err))
+		log.Fatal("Error loading config: ", err.Error())
 	}
 
 	if configFile != "" {
 		c, err = config.InitConfigFromFile(configFile)
 		if err != nil {
-			log.Fatal("Error loading config:", zap.Error(err))
+			log.Fatal("Error loading config: ", err.Error())
 		}
 	}
 	backendFactory := clients.NewBackendFactory(*c)
