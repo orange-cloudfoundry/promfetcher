@@ -1,12 +1,16 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"flag"
 	"fmt"
 	"net"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -59,20 +63,50 @@ func main() {
 		go checkDbConnection(c.DB)
 	}
 
-	listenAddr := fmt.Sprintf("0.0.0.0:%d", c.Port)
-	if !c.EnableSSL {
-		log.Infof("Listen %s without tls ...", listenAddr)
-		err = http.ListenAndServe(listenAddr, rtr)
-	} else {
-		log.Infof("Listen %s with tls ...", listenAddr)
-		err = serveHTTPS(c, rtr)
-	}
+	srvSignal := make(chan os.Signal, 1)
+	signal.Notify(srvSignal, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL)
+
+	srvCtx, cancel := context.WithCancel(context.Background())
+
+	go func() {
+		<-srvSignal
+		cancel()
+	}()
+
+	listener, err := makeListener(c)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+	srv := &http.Server{Handler: rtr}
+
+	go func() {
+		if err = srv.Serve(listener); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %+s\n", err)
+		}
+	}()
+	defer srv.Close()
+
+	<-srvCtx.Done()
+
+	ctxShutDown, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer func() {
+		cancel()
+	}()
+
+	err = srv.Shutdown(ctxShutDown)
+	if err != nil {
+		log.Fatalf("server shutdown gracefully Failed: %s\n", err.Error())
+	}
+	log.Info("server gracefully shutdown")
 }
 
-func serveHTTPS(c *config.Config, handler http.Handler) error {
+func makeListener(c *config.Config) (net.Listener, error) {
+	listenAddr := fmt.Sprintf("0.0.0.0:%d", c.Port)
+	if !c.EnableSSL {
+		log.Infof("Listen %s without tls ...", listenAddr)
+		return net.Listen("tcp", listenAddr)
+	}
+	log.Infof("Listen %s with tls ...", listenAddr)
 	rootCAs, err := x509.SystemCertPool()
 	if err != nil {
 		rootCAs = nil
@@ -80,7 +114,7 @@ func serveHTTPS(c *config.Config, handler http.Handler) error {
 	if err == nil {
 		if c.CACerts != "" {
 			if ok := rootCAs.AppendCertsFromPEM([]byte(c.CACerts)); !ok {
-				return fmt.Errorf("error adding a CA cert to cert pool")
+				return nil, fmt.Errorf("error adding a CA cert to cert pool")
 			}
 		}
 	}
@@ -91,15 +125,11 @@ func serveHTTPS(c *config.Config, handler http.Handler) error {
 	}
 
 	tlsConfig.BuildNameToCertificate()
-	listener, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", c.Port))
+	listener, err := net.Listen("tcp", listenAddr)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	defer listener.Close()
-	tlsListener := tls.NewListener(listener, tlsConfig)
-	defer tlsListener.Close()
-
-	return http.Serve(tlsListener, handler)
+	return tls.NewListener(listener, tlsConfig), nil
 }
 
 func checkDbConnection(db *gorm.DB) {
