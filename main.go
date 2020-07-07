@@ -64,7 +64,7 @@ func main() {
 	}
 
 	srvSignal := make(chan os.Signal, 1)
-	signal.Notify(srvSignal, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL)
+	signal.Notify(srvSignal, syscall.SIGTERM, syscall.SIGINT)
 
 	srvCtx, cancel := context.WithCancel(context.Background())
 

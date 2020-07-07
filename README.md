@@ -57,3 +57,8 @@ Promfetcher expose metrics on `/metrics`:
 - `promfetch_metric_fetch_success_total`: Number of fetched metrics succeeded for an app (app instance call are summed).
 - `promfetch_latest_time_scrape_route`: Last time that route has been scraped in seconds.
 - `promfetch_scrape_route_failed_total`: Number of non fetched metrics without be an normal error.
+
+## Graceful shutdown
+
+Promfetcher when receiving a SIGINT or SIGTERM signal will stop listening new connections and will wait to finish 
+opened requests before stopping. If opened requests are not finished after 15 seconds the server will be hard closed.
