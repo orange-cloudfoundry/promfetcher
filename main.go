@@ -42,7 +42,7 @@ func main() {
 	}
 	backendFactory := clients.NewBackendFactory(*c)
 	scraper := scrapers.NewScraper(backendFactory, c.DB)
-	routeFetcher := fetchers.NewRoutesFetcher(c.Gorouter)
+	routeFetcher := fetchers.NewRoutesFetcher(c.Gorouters)
 	metricsFetcher := fetchers.NewMetricsFetcher(scraper, routeFetcher)
 
 	rtr := mux.NewRouter()

@@ -17,18 +17,17 @@ import (
 type RoutesFetcher struct {
 	mu              sync.Mutex
 	routes          *models.Routes
-	httpClient      *http.Client
+	goRtrHttpClts   []*http.Client
 	lastSuccessTime time.Time
 }
 
-func NewRoutesFetcher(confGorouter config.GorouterConfig) *RoutesFetcher {
+func NewRoutesFetcher(confGorouters []config.GorouterConfig) *RoutesFetcher {
 	rts := make(models.Routes)
-	return &RoutesFetcher{
-		mu:              sync.Mutex{},
-		routes:          &rts,
-		lastSuccessTime: time.Now(),
-		httpClient: &http.Client{
-			Transport: NewFetcherTransport(confGorouter, &http.Transport{
+
+	goRtrHttpClts := make([]*http.Client, 0)
+	for _, conf := range confGorouters {
+		goRtrHttpClts = append(goRtrHttpClts, &http.Client{
+			Transport: NewFetcherTransport(conf, &http.Transport{
 				Proxy: http.ProxyFromEnvironment,
 				DialContext: (&net.Dialer{
 					Timeout:   30 * time.Second,
@@ -42,7 +41,13 @@ func NewRoutesFetcher(confGorouter config.GorouterConfig) *RoutesFetcher {
 				ExpectContinueTimeout: 1 * time.Second,
 			}),
 			Timeout: 30 * time.Second,
-		},
+		})
+	}
+	return &RoutesFetcher{
+		mu:              sync.Mutex{},
+		routes:          &rts,
+		lastSuccessTime: time.Now(),
+		goRtrHttpClts:   goRtrHttpClts,
 	}
 }
 
@@ -66,21 +71,38 @@ func (f RoutesFetcher) Run() {
 }
 
 func (f *RoutesFetcher) updateRoutes() error {
-	resp, err := f.httpClient.Get("/routes")
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
+	routes := make(models.Routes)
 
-	b, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
+	for _, client := range f.goRtrHttpClts {
+		resp, err := client.Get("/routes")
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
 
-	var routes models.Routes
-	err = json.Unmarshal(b, &routes)
-	if err != nil {
-		return err
+		b, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+
+		var tmpRoutes models.Routes
+		err = json.Unmarshal(b, &tmpRoutes)
+		if err != nil {
+			return err
+		}
+
+		if len(routes) == 0 {
+			routes = tmpRoutes
+			continue
+		}
+
+		for routeName, route := range tmpRoutes {
+			// only add when unknown
+			if _, ok := routes[routeName]; ok {
+				continue
+			}
+			routes[routeName] = route
+		}
 	}
 
 	f.mu.Lock()

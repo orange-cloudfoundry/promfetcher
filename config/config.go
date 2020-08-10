@@ -31,11 +31,13 @@ type BackendConfig struct {
 	TLSPem                `yaml:",inline"` // embed to get cert_chain and private_key for client authentication
 }
 
-var defaultGorouterConfig = GorouterConfig{
-	Host: "localhost",
-	Port: 8080,
-	User: "",
-	Pass: "",
+var defaultGoroutersConfig = []GorouterConfig{
+	{
+		Host: "localhost",
+		Port: 8080,
+		User: "",
+		Pass: "",
+	},
 }
 
 type BrokerConfig struct {
@@ -87,15 +89,15 @@ type TLSPem struct {
 }
 
 type Config struct {
-	Gorouter          GorouterConfig  `yaml:"gorouter,omitempty"`
-	Logging           Log             `yaml:"logging,omitempty"`
-	Port              uint16          `yaml:"port,omitempty"`
-	EnableSSL         bool            `yaml:"enable_ssl,omitempty"`
-	SSLCertificate    tls.Certificate `yaml:"-"`
-	TLSPEM            TLSPem          `yaml:"tls_pem,omitempty"`
-	CACerts           string          `yaml:"ca_certs,omitempty"`
-	CAPool            *x509.CertPool  `yaml:"-"`
-	SkipSSLValidation bool            `yaml:"skip_ssl_validation,omitempty"`
+	Gorouters         []GorouterConfig `yaml:"gorouters,omitempty"`
+	Logging           Log              `yaml:"logging,omitempty"`
+	Port              uint16           `yaml:"port,omitempty"`
+	EnableSSL         bool             `yaml:"enable_ssl,omitempty"`
+	SSLCertificate    tls.Certificate  `yaml:"-"`
+	TLSPEM            TLSPem           `yaml:"tls_pem,omitempty"`
+	CACerts           string           `yaml:"ca_certs,omitempty"`
+	CAPool            *x509.CertPool   `yaml:"-"`
+	SkipSSLValidation bool             `yaml:"skip_ssl_validation,omitempty"`
 
 	Backends BackendConfig `yaml:"backends,omitempty"`
 
@@ -116,7 +118,7 @@ type Config struct {
 }
 
 var defaultConfig = Config{
-	Gorouter:            defaultGorouterConfig,
+	Gorouters:           defaultGoroutersConfig,
 	Logging:             Log{},
 	Port:                8085,
 	DisableKeepAlives:   true,
@@ -236,7 +238,7 @@ func (c *Config) buildCertPool() error {
 }
 
 func (c *Config) Initialize(configYAML []byte) error {
-	c.Gorouter = GorouterConfig{}
+	c.Gorouters = make([]GorouterConfig, 0)
 	return yaml.Unmarshal(configYAML, &c)
 }
 
