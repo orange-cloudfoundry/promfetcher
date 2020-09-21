@@ -38,7 +38,7 @@ go_memstats_mspan_sys_bytes{organization_id="7d66c7e7-196a-40e5-a259-f5afaf6a56f
 ## How to use ?
 
 See [how to use](/userdocs/templates/how-to-use.md) file which is also readable as a user after deploy promfetcher 
-at http://promefetcher.url.com/doc
+at http://promfetcher.your.domain/doc
 
 ## How it works ?
 
