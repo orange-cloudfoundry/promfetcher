@@ -2,8 +2,12 @@
 ## explicit
 code.cloudfoundry.org/lager
 code.cloudfoundry.org/lager/internal/truncate
-# github.com/beorn7/perks v1.0.0
+# github.com/beorn7/perks v1.0.1
 github.com/beorn7/perks/quantile
+# github.com/cespare/xxhash/v2 v2.1.1
+github.com/cespare/xxhash/v2
+# github.com/felixge/httpsnoop v1.0.1
+github.com/felixge/httpsnoop
 # github.com/go-sql-driver/mysql v1.5.0
 github.com/go-sql-driver/mysql
 # github.com/gobuffalo/logger v1.0.3
@@ -20,21 +24,21 @@ github.com/gobuffalo/packr/v2/file/resolver/encoding/hex
 github.com/gobuffalo/packr/v2/jam/parser
 github.com/gobuffalo/packr/v2/plog
 # github.com/golang/protobuf v1.4.2
-## explicit
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
-# github.com/google/uuid v1.1.0
+# github.com/google/uuid v1.1.2
+## explicit
 github.com/google/uuid
-# github.com/gorilla/handlers v1.4.2
+# github.com/gorilla/handlers v1.5.1
 ## explicit
 github.com/gorilla/handlers
-# github.com/gorilla/mux v1.7.4
+# github.com/gorilla/mux v1.8.0
 ## explicit
 github.com/gorilla/mux
-# github.com/jinzhu/gorm v1.9.14
+# github.com/jinzhu/gorm v1.9.16
 ## explicit
 github.com/jinzhu/gorm
 github.com/jinzhu/gorm/dialects/mysql
@@ -42,12 +46,11 @@ github.com/jinzhu/gorm/dialects/postgres
 github.com/jinzhu/gorm/dialects/sqlite
 # github.com/jinzhu/inflection v1.0.0
 github.com/jinzhu/inflection
-# github.com/karrick/godirwalk v1.15.6
+# github.com/karrick/godirwalk v1.16.1
 ## explicit
 github.com/karrick/godirwalk
-# github.com/konsorten/go-windows-terminal-sequences v1.0.3
-github.com/konsorten/go-windows-terminal-sequences
-# github.com/lib/pq v1.1.1
+# github.com/lib/pq v1.8.0
+## explicit
 github.com/lib/pq
 github.com/lib/pq/hstore
 github.com/lib/pq/oid
@@ -58,13 +61,15 @@ github.com/markbates/errx
 github.com/markbates/oncer
 # github.com/markbates/safe v1.0.1
 github.com/markbates/safe
-# github.com/mattn/go-sqlite3 v1.14.0
+# github.com/mattn/go-sqlite3 v1.14.4
+## explicit
 github.com/mattn/go-sqlite3
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
 github.com/matttproud/golang_protobuf_extensions/pbutil
-# github.com/pborman/uuid v0.0.0-20180906182336-adf5a7427709
+# github.com/pborman/uuid v1.2.1
+## explicit
 github.com/pborman/uuid
-# github.com/pivotal-cf/brokerapi/v7 v7.2.0
+# github.com/pivotal-cf/brokerapi/v7 v7.4.0
 ## explicit
 github.com/pivotal-cf/brokerapi/v7
 github.com/pivotal-cf/brokerapi/v7/auth
@@ -75,7 +80,7 @@ github.com/pivotal-cf/brokerapi/v7/middlewares
 github.com/pivotal-cf/brokerapi/v7/utils
 # github.com/pkg/errors v0.9.1
 github.com/pkg/errors
-# github.com/prometheus/client_golang v1.0.0
+# github.com/prometheus/client_golang v1.7.1
 ## explicit
 github.com/prometheus/client_golang/prometheus
 github.com/prometheus/client_golang/prometheus/internal
@@ -83,14 +88,16 @@ github.com/prometheus/client_golang/prometheus/promhttp
 # github.com/prometheus/client_model v0.2.0
 ## explicit
 github.com/prometheus/client_model/go
-# github.com/prometheus/common v0.10.0
+# github.com/prometheus/common v0.14.0
 ## explicit
 github.com/prometheus/common/expfmt
 github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg
 github.com/prometheus/common/model
-# github.com/prometheus/procfs v0.0.2
+# github.com/prometheus/procfs v0.2.0
+## explicit
 github.com/prometheus/procfs
 github.com/prometheus/procfs/internal/fs
+github.com/prometheus/procfs/internal/util
 # github.com/rogpeppe/go-internal v1.6.0
 ## explicit
 # github.com/russross/blackfriday/v2 v2.0.1
@@ -98,20 +105,21 @@ github.com/prometheus/procfs/internal/fs
 github.com/russross/blackfriday/v2
 # github.com/shurcooL/sanitized_anchor_name v1.0.0
 github.com/shurcooL/sanitized_anchor_name
-# github.com/sirupsen/logrus v1.6.0
+# github.com/sirupsen/logrus v1.7.0
 ## explicit
 github.com/sirupsen/logrus
-# golang.org/x/crypto v0.0.0-20200604202706-70a84ac30bf9
+# golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0
 ## explicit
 golang.org/x/crypto/ssh/terminal
 # golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
 ## explicit
-# golang.org/x/sys v0.0.0-20200622182413-4b0db7f3f76b
+# golang.org/x/sys v0.0.0-20201007082116-8445cc04cbdf
 ## explicit
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# google.golang.org/protobuf v1.23.0
+# google.golang.org/protobuf v1.25.0
+## explicit
 google.golang.org/protobuf/encoding/prototext
 google.golang.org/protobuf/encoding/protowire
 google.golang.org/protobuf/internal/descfmt
@@ -122,12 +130,11 @@ google.golang.org/protobuf/internal/encoding/messageset
 google.golang.org/protobuf/internal/encoding/tag
 google.golang.org/protobuf/internal/encoding/text
 google.golang.org/protobuf/internal/errors
-google.golang.org/protobuf/internal/fieldnum
 google.golang.org/protobuf/internal/fieldsort
 google.golang.org/protobuf/internal/filedesc
 google.golang.org/protobuf/internal/filetype
 google.golang.org/protobuf/internal/flags
-google.golang.org/protobuf/internal/genname
+google.golang.org/protobuf/internal/genid
 google.golang.org/protobuf/internal/impl
 google.golang.org/protobuf/internal/mapsort
 google.golang.org/protobuf/internal/pragma
