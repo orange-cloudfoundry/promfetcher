@@ -3,7 +3,7 @@
 Promfetcher was made for [cloud foundry](https://cloudfoundry.org) and the idea behind is to give ability to fetch 
 metrics from all app instances in a cloud foundry environment.
 
-User can retrieve is metrics by simply call `/v1/apps/[org_name]/[space_name]/[app_name]/metrics` or by route url `/v1/apps/metrics?route_url=my.route.name` which will merge all metrics 
+User can retrieve is metrics by simply call `/v1/apps/[org_name]/[space_name]/[app_name]/metrics` or by route url `/v1/apps/metrics?route_url=my.route.com` which will merge all metrics 
 from app(s) instances and add labels:
 - `organization_id`
 - `space_id` 
