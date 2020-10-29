@@ -31,11 +31,11 @@ func NewMetricsFetcher(scraper *scrapers.Scraper, routesFetcher *RoutesFetcher) 
 	}
 }
 
-func (f MetricsFetcher) Metrics(appIdOrPath string) (map[string]*dto.MetricFamily, error) {
+func (f MetricsFetcher) Metrics(appIdOrPathOrName string) (map[string]*dto.MetricFamily, error) {
 
-	routes := f.routesFetcher.Routes().Find(appIdOrPath)
+	routes := f.routesFetcher.Routes().Find(appIdOrPathOrName)
 	if len(routes) == 0 {
-		return make(map[string]*dto.MetricFamily), errors.ErrNoAppFound(appIdOrPath)
+		return make(map[string]*dto.MetricFamily), errors.ErrNoAppFound(appIdOrPathOrName)
 	}
 	jobs := make(chan models.Route, len(routes))
 	errFetch := &errors.ErrFetch{}

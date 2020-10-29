@@ -40,6 +40,7 @@ func main() {
 			log.Fatal("Error loading config: ", err.Error())
 		}
 	}
+
 	backendFactory := clients.NewBackendFactory(*c)
 	scraper := scrapers.NewScraper(backendFactory, c.DB)
 	routeFetcher := fetchers.NewRoutesFetcher(c.Gorouters)

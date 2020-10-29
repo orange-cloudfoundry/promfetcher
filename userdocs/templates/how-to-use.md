@@ -1,10 +1,13 @@
 ## If metrics available on `/metrics` on your app
 
-You have nothing to do, you can retrieve app instances metrics by simply call: 
-[{{.BaseURL}}/v1/apps/\[org_name\]/\[space_name\]/\[app_name\]/metrics]({{.BaseURL}}/v1/apps/<org_name>/<space_name>/<app_name>/metrics) or 
-[{{.BaseURL}}/v1/apps/\[app_id\]/metrics]({{.BaseURL}}/v1/apps/<app_id>/metrics) or 
-[{{.BaseURL}}/v1/apps/metrics?app="\[org_name\]/\[space_name\]/\[app_name\]"]({{.BaseURL}}/v1/apps/metrics?app="\[org_name\]/\[space_name\]/\[app_name\]") or
-[{{.BaseURL}}/v1/apps/metrics?app="\[app_id\]"]({{.BaseURL}}/v1/apps/metrics?app="\[app_id\]")
+You have nothing to do, you can retrieve app instances metrics by simply call one of: 
+- [{{.BaseURL}}/v1/apps/\[org_name\]/\[space_name\]/\[app_name\]/metrics]({{.BaseURL}}/v1/apps/<org_name>/<space_name>/<app_name>/metrics)
+- [{{.BaseURL}}/v1/apps/\[app_id\]/metrics]({{.BaseURL}}/v1/apps/<app_id>/metrics)
+- [{{.BaseURL}}/v1/apps/metrics?app="\[org_name\]/\[space_name\]/\[app_name\]"]({{.BaseURL}}/v1/apps/metrics?app="\[org_name\]/\[space_name\]/\[app_name\]")
+- [{{.BaseURL}}/v1/apps/metrics?app="\[app_id\]"]({{.BaseURL}}/v1/apps/metrics?app="\[app_id\]")
+- [{{.BaseURL}}/v1/apps/\[route.url.com\]/metrics]({{.BaseURL}}/v1/apps/<route.url.com>/metrics)
+- [{{.BaseURL}}/v1/apps/metrics?route_url="\[route.url.com\]"]({{.BaseURL}}/v1/apps/metrics?route_url="\[route.url.com\]")
+
 
 
 ## Set a different endpoint

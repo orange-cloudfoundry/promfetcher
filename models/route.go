@@ -3,6 +3,8 @@ package models
 import (
 	"net/url"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 const ProcessWeb = "web"
@@ -80,14 +82,27 @@ func (rts Routes) FindById(appId string) []Route {
 	return finalRoutes
 }
 
-func (rts Routes) Find(appIdOrPath string) []Route {
-	tmpContent, err := url.PathUnescape(appIdOrPath)
-	if err == nil {
-		appIdOrPath = tmpContent
+func (rts Routes) FindByRouteName(routeName string) []Route {
+	finalRoutes, ok := rts[routeName]
+	if !ok {
+		return []Route{}
 	}
-	splitContent := strings.Split(appIdOrPath, "/")
+	return finalRoutes
+}
+
+func (rts Routes) Find(appIdOrPathOrName string) []Route {
+	tmpContent, err := url.PathUnescape(appIdOrPathOrName)
+	if err == nil {
+		appIdOrPathOrName = tmpContent
+	}
+	splitContent := strings.Split(appIdOrPathOrName, "/")
 	if len(splitContent) == 3 {
 		return rts.FindByOrgSpaceName(splitContent[0], splitContent[1], splitContent[2])
 	}
-	return rts.FindById(appIdOrPath)
+	// if can be parsed as uuid that's a uuid
+	_, err = uuid.Parse(appIdOrPathOrName)
+	if err == nil {
+		return rts.FindById(appIdOrPathOrName)
+	}
+	return rts.FindByRouteName(appIdOrPathOrName)
 }
