@@ -20,14 +20,12 @@ func ptrString(v string) *string {
 type MetricsFetcher struct {
 	scraper       *scrapers.Scraper
 	routesFetcher *RoutesFetcher
-	parser        *expfmt.TextParser
 }
 
 func NewMetricsFetcher(scraper *scrapers.Scraper, routesFetcher *RoutesFetcher) *MetricsFetcher {
 	return &MetricsFetcher{
 		scraper:       scraper,
 		routesFetcher: routesFetcher,
-		parser:        &expfmt.TextParser{},
 	}
 }
 
@@ -105,8 +103,8 @@ func (f MetricsFetcher) Metric(route models.Route) (map[string]*dto.MetricFamily
 		return nil, err
 	}
 	defer reader.Close()
-
-	metricsGroup, err := f.parser.TextToMetricFamilies(reader)
+	parser := &expfmt.TextParser{}
+	metricsGroup, err := parser.TextToMetricFamilies(reader)
 	if err != nil {
 		return nil, err
 	}
