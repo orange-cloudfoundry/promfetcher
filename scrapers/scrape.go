@@ -31,14 +31,17 @@ func (s Scraper) Scrape(route models.Route) (io.ReadCloser, error) {
 		scheme = "https"
 	}
 	endpoint := "/metrics"
-	if s.db != nil {
+	if route.MetricsPath != "" {
+		endpoint = route.MetricsPath
+	}
+	if s.db != nil && route.MetricsPath == "" {
 		var appEndpoint models.AppEndpoint
 		s.db.First(&appEndpoint, "app_guid = ?", route.Tags.AppID)
 		if appEndpoint.GUID != "" {
 			endpoint = appEndpoint.Endpoint
 		}
 	}
-
+	fmt.Println(fmt.Sprintf("%s://%s%s", scheme, route.Address, endpoint))
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s://%s%s", scheme, route.Address, endpoint), nil)
 	if err != nil {
 		return nil, err
@@ -46,7 +49,13 @@ func (s Scraper) Scrape(route models.Route) (io.ReadCloser, error) {
 	req.Header.Add("Accept", acceptHeader)
 	req.Header.Add("Accept-Encoding", "gzip")
 	req.Header.Set("X-Prometheus-Scrape-Timeout-Seconds", fmt.Sprintf("%f", time.Duration(30*time.Second).Seconds()))
-
+	if route.URLParams != nil && len(route.URLParams) > 0 {
+		urlParamsCurrent := req.URL.Query()
+		for key, values := range route.URLParams {
+			urlParamsCurrent[key] = values
+		}
+		req.URL.RawQuery = urlParamsCurrent.Encode()
+	}
 	client := s.backendFactory.NewClient(route)
 	resp, err := client.Do(req)
 	if err != nil {

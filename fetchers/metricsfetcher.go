@@ -1,8 +1,10 @@
 package fetchers
 
 import (
+	"fmt"
 	"sync"
 
+	"github.com/orange-cloudfoundry/promfetcher/config"
 	"github.com/orange-cloudfoundry/promfetcher/errors"
 	"github.com/orange-cloudfoundry/promfetcher/metrics"
 	"github.com/orange-cloudfoundry/promfetcher/models"
@@ -18,14 +20,16 @@ func ptrString(v string) *string {
 }
 
 type MetricsFetcher struct {
-	scraper       *scrapers.Scraper
-	routesFetcher *RoutesFetcher
+	scraper           *scrapers.Scraper
+	routesFetcher     *RoutesFetcher
+	externalExporters config.ExternalExporters
 }
 
-func NewMetricsFetcher(scraper *scrapers.Scraper, routesFetcher *RoutesFetcher) *MetricsFetcher {
+func NewMetricsFetcher(scraper *scrapers.Scraper, routesFetcher *RoutesFetcher, externalExporters config.ExternalExporters) *MetricsFetcher {
 	return &MetricsFetcher{
-		scraper:       scraper,
-		routesFetcher: routesFetcher,
+		scraper:           scraper,
+		routesFetcher:     routesFetcher,
+		externalExporters: externalExporters,
 	}
 }
 
@@ -35,12 +39,40 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName string) (map[string]*dto.Metri
 	if len(routes) == 0 {
 		return make(map[string]*dto.MetricFamily), errors.ErrNoAppFound(appIdOrPathOrName)
 	}
+	mapTagsRoute := make(map[string]models.Tags)
+	for _, rte := range routes {
+		mapTagsRoute[rte.Tags.AppID] = rte.Tags
+	}
 	jobs := make(chan models.Route, len(routes))
 	errFetch := &errors.ErrFetch{}
 	wg := &sync.WaitGroup{}
 
 	muWrite := sync.Mutex{}
 	metricsUnmerged := make([]map[string]*dto.MetricFamily, 0)
+
+	if f.externalExporters != nil && len(f.externalExporters) > 0 {
+		for _, tagRte := range mapTagsRoute {
+			eeRoutes, err := f.externalExporters.ToRoutes(models.Tags{
+				ProcessType:      "external_exporter",
+				Component:        "promfetcher",
+				SpaceName:        tagRte.SpaceName,
+				OrganizationID:   tagRte.OrganizationID,
+				OrganizationName: tagRte.OrganizationName,
+				SourceID:         tagRte.SourceID,
+				AppID:            tagRte.AppID,
+				AppName:          tagRte.AppName,
+				SpaceID:          tagRte.SpaceID,
+			})
+			if err != nil {
+				err = fmt.Errorf("error when setting external exporters routes: %s", err.Error())
+				newMetrics := f.scrapeError(routes[0], err)
+				metricsUnmerged = append(metricsUnmerged, newMetrics)
+				log.Warningf(err.Error())
+				continue
+			}
+			routes = append(routes, eeRoutes...)
+		}
+	}
 
 	wg.Add(len(routes))
 	for w := 1; w <= 5; w++ {
@@ -142,19 +174,24 @@ func (f MetricsFetcher) Metric(route models.Route) (map[string]*dto.MetricFamily
 					Name:  ptrString("app_name"),
 					Value: ptrString(route.Tags.AppName),
 				},
-				&dto.LabelPair{
-					Name:  ptrString("index"),
-					Value: ptrString(route.Tags.InstanceID),
-				},
-				&dto.LabelPair{
-					Name:  ptrString("instance_id"),
-					Value: ptrString(route.Tags.InstanceID),
-				},
-				&dto.LabelPair{
-					Name:  ptrString("instance"),
-					Value: ptrString(route.Address),
-				},
 			)
+			if route.Tags.InstanceID != "" {
+				metric.Label = append(metric.Label,
+					&dto.LabelPair{
+						Name:  ptrString("index"),
+						Value: ptrString(route.Tags.InstanceID),
+					},
+					&dto.LabelPair{
+						Name:  ptrString("instance_id"),
+						Value: ptrString(route.Tags.InstanceID),
+					},
+					&dto.LabelPair{
+						Name:  ptrString("instance"),
+						Value: ptrString(route.Address),
+					},
+				)
+			}
+
 		}
 	}
 	return metricsGroup, nil

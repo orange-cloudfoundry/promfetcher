@@ -27,13 +27,15 @@ type Tags struct {
 }
 
 type Route struct {
-	PrivateInstanceID   string `json:"private_instance_id"`
-	Tags                Tags   `json:"tags"`
-	ServerCertDomainSan string `json:"server_cert_domain_san"`
-	Address             string `json:"address"`
-	TLS                 bool   `json:"tls"`
-	TTL                 int    `json:"ttl"`
-	URL                 string `json:"-"`
+	PrivateInstanceID   string     `json:"private_instance_id"`
+	Tags                Tags       `json:"tags"`
+	ServerCertDomainSan string     `json:"server_cert_domain_san"`
+	Address             string     `json:"address"`
+	TLS                 bool       `json:"tls"`
+	TTL                 int        `json:"ttl"`
+	URL                 string     `json:"-"`
+	URLParams           url.Values `json:"-"`
+	MetricsPath         string     `json:"-"`
 }
 
 func (rts Routes) FindByOrgSpaceName(org, space, name string) []Route {

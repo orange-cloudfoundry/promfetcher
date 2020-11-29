@@ -44,7 +44,7 @@ func main() {
 	backendFactory := clients.NewBackendFactory(*c)
 	scraper := scrapers.NewScraper(backendFactory, c.DB)
 	routeFetcher := fetchers.NewRoutesFetcher(c.Gorouters)
-	metricsFetcher := fetchers.NewMetricsFetcher(scraper, routeFetcher)
+	metricsFetcher := fetchers.NewMetricsFetcher(scraper, routeFetcher, c.ExternalExporters)
 
 	rtr := mux.NewRouter()
 	api.Register(

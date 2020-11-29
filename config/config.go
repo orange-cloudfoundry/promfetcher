@@ -115,6 +115,8 @@ type Config struct {
 	DB                    *gorm.DB `yaml:"-"`
 
 	BaseURL string `yaml:"base_url"`
+
+	ExternalExporters ExternalExporters `yaml:"external_exporters"`
 }
 
 var defaultConfig = Config{
