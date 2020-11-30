@@ -52,7 +52,7 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName string) (map[string]*dto.Metri
 
 	if f.externalExporters != nil && len(f.externalExporters) > 0 {
 		for _, tagRte := range mapTagsRoute {
-			eeRoutes, err := f.externalExporters.ToRoutes(models.Tags{
+			tags := models.Tags{
 				ProcessType:      "external_exporter",
 				Component:        "promfetcher",
 				SpaceName:        tagRte.SpaceName,
@@ -62,15 +62,21 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName string) (map[string]*dto.Metri
 				AppID:            tagRte.AppID,
 				AppName:          tagRte.AppName,
 				SpaceID:          tagRte.SpaceID,
-			})
-			if err != nil {
-				err = fmt.Errorf("error when setting external exporters routes: %s", err.Error())
-				newMetrics := f.scrapeError(routes[0], err)
-				metricsUnmerged = append(metricsUnmerged, newMetrics)
-				log.Warningf(err.Error())
-				continue
 			}
-			routes = append(routes, eeRoutes...)
+			for _, ee := range f.externalExporters {
+				routeExternalExporter, err := ee.ToRoute(tags)
+				if err != nil {
+					err = fmt.Errorf("error when setting external exporters routes: %s", err.Error())
+					newMetrics := f.scrapeExternalExporterError(tags, ee, err)
+					metricsUnmerged = append(metricsUnmerged, newMetrics)
+					log.WithField("external_exporter", ee.Name).
+						WithField("action", "route convert").
+						WithField("app", fmt.Sprintf("%s/%s/%s", tags.OrganizationName, tags.SpaceName, tags.AppName)).
+						Warningf(err.Error())
+					continue
+				}
+				routes = append(routes, routeExternalExporter)
+			}
 		}
 	}
 
@@ -80,7 +86,7 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName string) (map[string]*dto.Metri
 			for j := range jobs {
 				newMetrics, err := f.Metric(j)
 				if err != nil {
-					if errF, ok := err.(*errors.ErrFetch); ok {
+					if errF, ok := err.(*errors.ErrFetch); ok && (f.externalExporters == nil || len(f.externalExporters) == 0) {
 						muWrite.Lock()
 						*errFetch = *errF
 						muWrite.Unlock()
@@ -239,6 +245,40 @@ func (f MetricsFetcher) scrapeError(route models.Route, err error) map[string]*d
 	metricType := dto.MetricType_COUNTER
 	return map[string]*dto.MetricFamily{
 		"promfetcher_scrape_error": &dto.MetricFamily{
+			Name:   ptrString(name),
+			Help:   ptrString(help),
+			Type:   &metricType,
+			Metric: []*dto.Metric{&dtoMetric},
+		},
+	}
+}
+
+func (f MetricsFetcher) scrapeExternalExporterError(tags models.Tags, externalExporter *config.ExternalExporter, err error) map[string]*dto.MetricFamily {
+	name := "promfetcher_scrape_external_exporter_error"
+	help := "Promfetcher scrap external exporter error on your instance"
+	metric := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: name,
+		Help: help,
+		ConstLabels: prometheus.Labels{
+			"organization_id":   tags.OrganizationID,
+			"space_id":          tags.SpaceID,
+			"app_id":            tags.AppID,
+			"organization_name": tags.OrganizationName,
+			"space_name":        tags.SpaceName,
+			"app_name":          tags.AppName,
+			"index":             tags.InstanceID,
+			"instance_id":       tags.InstanceID,
+			"instance":          externalExporter.Host,
+			"name":              externalExporter.Name,
+			"error":             err.Error(),
+		},
+	})
+	metric.Inc()
+	var dtoMetric dto.Metric
+	metric.Write(&dtoMetric)
+	metricType := dto.MetricType_COUNTER
+	return map[string]*dto.MetricFamily{
+		"promfetcher_scrape_external_exporter_error": &dto.MetricFamily{
 			Name:   ptrString(name),
 			Help:   ptrString(help),
 			Type:   &metricType,

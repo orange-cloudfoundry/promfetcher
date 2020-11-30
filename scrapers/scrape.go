@@ -41,7 +41,6 @@ func (s Scraper) Scrape(route models.Route) (io.ReadCloser, error) {
 			endpoint = appEndpoint.Endpoint
 		}
 	}
-	fmt.Println(fmt.Sprintf("%s://%s%s", scheme, route.Address, endpoint))
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s://%s%s", scheme, route.Address, endpoint), nil)
 	if err != nil {
 		return nil, err

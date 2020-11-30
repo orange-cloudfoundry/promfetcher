@@ -12,18 +12,6 @@ import (
 
 type ExternalExporters []*ExternalExporter
 
-func (ees ExternalExporters) ToRoutes(tags models.Tags) ([]models.Route, error) {
-	var err error
-	routes := make([]models.Route, len(ees))
-	for i, ee := range ees {
-		routes[i], err = ee.ToRoute(tags)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return routes, nil
-}
-
 type ExternalExporter struct {
 	Name        string                     `yaml:"name"`
 	Host        string                     `yaml:"host"`
