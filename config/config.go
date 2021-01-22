@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"net/url"
 	"strings"
 	"time"
@@ -244,13 +245,14 @@ func (c *Config) Initialize(configYAML []byte) error {
 	return yaml.Unmarshal(configYAML, &c)
 }
 
-func InitConfigFromFile(path string) (*Config, error) {
+func InitConfigFromFile(file *os.File) (*Config, error) {
 	c, err := DefaultConfig()
 	if err != nil {
 		return nil, err
 	}
 
-	b, err := ioutil.ReadFile(path)
+
+	b, err := ioutil.ReadAll(file)
 	if err != nil {
 		return nil, err
 	}
