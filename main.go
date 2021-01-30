@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
-	"flag"
 	"fmt"
 	"net"
 	"net/http"
@@ -21,21 +20,28 @@ import (
 	"github.com/orange-cloudfoundry/promfetcher/fetchers"
 	"github.com/orange-cloudfoundry/promfetcher/scrapers"
 	"github.com/orange-cloudfoundry/promfetcher/userdocs"
+	"github.com/alecthomas/kingpin"
+	"github.com/prometheus/common/version"
 	log "github.com/sirupsen/logrus"
 )
 
+
+var (
+	configFile = kingpin.Flag("config", "Configuration File").Short('c').File()
+)
+
 func main() {
-	var configFile string
-	flag.StringVar(&configFile, "c", "", "Configuration File")
-	flag.Parse()
+	kingpin.Version(version.Print("promfetcher"))
+	kingpin.HelpFlag.Short('h')
+	kingpin.Parse()
 
 	c, err := config.DefaultConfig()
 	if err != nil {
 		log.Fatal("Error loading config: ", err.Error())
 	}
 
-	if configFile != "" {
-		c, err = config.InitConfigFromFile(configFile)
+	if *configFile != nil {
+		c, err = config.InitConfigFromFile(*configFile)
 		if err != nil {
 			log.Fatal("Error loading config: ", err.Error())
 		}
