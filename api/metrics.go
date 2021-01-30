@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/orange-cloudfoundry/promfetcher/errors"
@@ -22,7 +23,14 @@ func (a Api) metrics(w http.ResponseWriter, req *http.Request) {
 		w.Write([]byte(fmt.Sprintf("%d %s: You must set app id or path", http.StatusBadRequest, http.StatusText(http.StatusBadRequest))))
 		return
 	}
-	metrics, err := a.metFetcher.Metrics(appIdOrPathOrName)
+	metricPathDefault := strings.TrimSpace(req.URL.Query().Get("metric_path"))
+	if metricPathDefault == "" {
+		metricPathDefault = "/metrics"
+	}
+	if metricPathDefault[0] != '/' {
+		metricPathDefault = "/" + metricPathDefault
+	}
+	metrics, err := a.metFetcher.Metrics(appIdOrPathOrName, metricPathDefault)
 	if err != nil {
 		if errFetch, ok := err.(*errors.ErrFetch); ok {
 			w.WriteHeader(errFetch.Code)

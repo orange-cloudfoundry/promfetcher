@@ -33,7 +33,7 @@ func NewMetricsFetcher(scraper *scrapers.Scraper, routesFetcher *RoutesFetcher, 
 	}
 }
 
-func (f MetricsFetcher) Metrics(appIdOrPathOrName string) (map[string]*dto.MetricFamily, error) {
+func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string) (map[string]*dto.MetricFamily, error) {
 
 	routes := f.routesFetcher.Routes().Find(appIdOrPathOrName)
 	if len(routes) == 0 {
@@ -84,7 +84,7 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName string) (map[string]*dto.Metri
 	for w := 1; w <= 5; w++ {
 		go func(jobs <-chan models.Route, errFetch *errors.ErrFetch) {
 			for j := range jobs {
-				newMetrics, err := f.Metric(j)
+				newMetrics, err := f.Metric(j, metricPathDefault)
 				if err != nil {
 					if errF, ok := err.(*errors.ErrFetch); ok && (f.externalExporters == nil || len(f.externalExporters) == 0) {
 						muWrite.Lock()
@@ -135,8 +135,8 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName string) (map[string]*dto.Metri
 	return base, nil
 }
 
-func (f MetricsFetcher) Metric(route models.Route) (map[string]*dto.MetricFamily, error) {
-	reader, err := f.scraper.Scrape(route)
+func (f MetricsFetcher) Metric(route models.Route, metricPathDefault string) (map[string]*dto.MetricFamily, error) {
+	reader, err := f.scraper.Scrape(route, metricPathDefault)
 	if err != nil {
 		return nil, err
 	}

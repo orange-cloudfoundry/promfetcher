@@ -25,12 +25,12 @@ func NewScraper(backendFactory *clients.BackendFactory, db *gorm.DB) *Scraper {
 
 }
 
-func (s Scraper) Scrape(route models.Route) (io.ReadCloser, error) {
+func (s Scraper) Scrape(route models.Route, metricPathDefault string) (io.ReadCloser, error) {
 	scheme := "http"
 	if route.TLS {
 		scheme = "https"
 	}
-	endpoint := "/metrics"
+	endpoint := metricPathDefault
 	if route.MetricsPath != "" {
 		endpoint = route.MetricsPath
 	}
