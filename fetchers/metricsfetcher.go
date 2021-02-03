@@ -217,7 +217,7 @@ func (f MetricsFetcher) cleanMetricLabels(labels []*dto.LabelPair, names ...stri
 			finalLabels = append(finalLabels, label)
 		}
 	}
-	return labels
+	return finalLabels
 }
 
 func (f MetricsFetcher) scrapeError(route models.Route, err error) map[string]*dto.MetricFamily {
