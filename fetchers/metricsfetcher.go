@@ -33,7 +33,7 @@ func NewMetricsFetcher(scraper *scrapers.Scraper, routesFetcher *RoutesFetcher, 
 	}
 }
 
-func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string) (map[string]*dto.MetricFamily, error) {
+func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string, onlyAppMetrics bool) (map[string]*dto.MetricFamily, error) {
 
 	routes := f.routesFetcher.Routes().Find(appIdOrPathOrName)
 	if len(routes) == 0 {
@@ -50,7 +50,7 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string) (ma
 	muWrite := sync.Mutex{}
 	metricsUnmerged := make([]map[string]*dto.MetricFamily, 0)
 
-	if f.externalExporters != nil && len(f.externalExporters) > 0 {
+	if !onlyAppMetrics && f.externalExporters != nil && len(f.externalExporters) > 0 {
 		for _, tagRte := range mapTagsRoute {
 			tags := models.Tags{
 				ProcessType:      "external_exporter",

@@ -30,7 +30,9 @@ func (a Api) metrics(w http.ResponseWriter, req *http.Request) {
 	if metricPathDefault[0] != '/' {
 		metricPathDefault = "/" + metricPathDefault
 	}
-	metrics, err := a.metFetcher.Metrics(appIdOrPathOrName, metricPathDefault)
+
+	_, onlyAppMetrics := req.URL.Query()["only_from_app"]
+	metrics, err := a.metFetcher.Metrics(appIdOrPathOrName, metricPathDefault, onlyAppMetrics)
 	if err != nil {
 		if errFetch, ok := err.(*errors.ErrFetch); ok {
 			w.WriteHeader(errFetch.Code)
