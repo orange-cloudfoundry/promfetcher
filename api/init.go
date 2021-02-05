@@ -20,10 +20,20 @@ func Register(rtr *mux.Router, metFetcher *fetchers.MetricsFetcher, broker *Brok
 	api := &Api{
 		metFetcher: metFetcher,
 	}
-	rtr.Handle("/v1/apps/{appIdOrPathOrName:.*}/metrics", handlers.CompressHandler(http.HandlerFunc(api.metrics))).
+
+	handlerMetrics := handlers.CompressHandler(http.HandlerFunc(api.metrics))
+	rtr.Handle("/v1/apps/{appIdOrPathOrName:.*}/metrics", handlerMetrics).
 		Methods(http.MethodGet)
 
-	rtr.Handle("/v1/apps/metrics", handlers.CompressHandler(http.HandlerFunc(api.metrics))).
+	rtr.Handle("/v1/apps/metrics", handlerMetrics).
+		Methods(http.MethodGet)
+
+	handlerOnlyAppMetrics := handlers.CompressHandler(forceOnlyForApp(http.HandlerFunc(api.metrics)))
+
+	rtr.Handle("/v1/apps/{appIdOrPathOrName:.*}/only-app-metrics", handlerOnlyAppMetrics).
+		Methods(http.MethodGet)
+
+	rtr.Handle("/v1/apps/only-app-metrics", handlerOnlyAppMetrics).
 		Methods(http.MethodGet)
 
 	rtr.NewRoute().MatcherFunc(func(req *http.Request, m *mux.RouteMatch) bool {

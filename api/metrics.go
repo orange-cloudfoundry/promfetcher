@@ -49,3 +49,12 @@ func (a Api) metrics(w http.ResponseWriter, req *http.Request) {
 		w.Write([]byte("\n"))
 	}
 }
+
+func forceOnlyForApp(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		query := req.URL.Query()
+		query.Set("only_from_app", "1")
+		req.URL.RawQuery = query.Encode()
+		next.ServeHTTP(w, req)
+	})
+}
