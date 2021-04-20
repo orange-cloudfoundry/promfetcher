@@ -12,6 +12,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/alecthomas/kingpin"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	"github.com/orange-cloudfoundry/promfetcher/api"
@@ -20,11 +21,9 @@ import (
 	"github.com/orange-cloudfoundry/promfetcher/fetchers"
 	"github.com/orange-cloudfoundry/promfetcher/scrapers"
 	"github.com/orange-cloudfoundry/promfetcher/userdocs"
-	"github.com/alecthomas/kingpin"
 	"github.com/prometheus/common/version"
 	log "github.com/sirupsen/logrus"
 )
-
 
 var (
 	configFile = kingpin.Flag("config", "Configuration File").Short('c').File()

@@ -36,7 +36,7 @@ var (
 	)
 )
 
-func RouteToLabel(route models.Route) prometheus.Labels {
+func RouteToLabel(route *models.Route) prometheus.Labels {
 	return map[string]string{
 		"organization_id":   route.Tags.OrganizationID,
 		"space_id":          route.Tags.SpaceID,
@@ -49,7 +49,7 @@ func RouteToLabel(route models.Route) prometheus.Labels {
 	}
 }
 
-func RouteToLabelNoInstance(route models.Route) prometheus.Labels {
+func RouteToLabelNoInstance(route *models.Route) prometheus.Labels {
 	return map[string]string{
 		"organization_id":   route.Tags.OrganizationID,
 		"space_id":          route.Tags.SpaceID,

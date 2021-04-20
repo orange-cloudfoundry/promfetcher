@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -51,7 +52,7 @@ func NewRoutesFetcher(confGorouters []config.GorouterConfig) *RoutesFetcher {
 	}
 }
 
-func (f RoutesFetcher) Run() {
+func (f *RoutesFetcher) Run() {
 	entry := log.WithField("component", "fetcher")
 	go func() {
 		for {
@@ -64,7 +65,8 @@ func (f RoutesFetcher) Run() {
 				f.lastSuccessTime = time.Now()
 				f.mu.Unlock()
 			}
-			metrics.LatestScrapeRoute.With(map[string]string{}).Set(time.Now().Sub(f.lastSuccessTime).Seconds())
+
+			metrics.LatestScrapeRoute.With(map[string]string{}).Set(time.Since(f.lastSuccessTime).Seconds())
 			time.Sleep(30 * time.Second)
 		}
 	}()
@@ -91,17 +93,25 @@ func (f *RoutesFetcher) updateRoutes() error {
 			return err
 		}
 
+		// insert host in routes
+		for routeName, routesInfo := range tmpRoutes {
+			// route can have path inside, we split to get only host
+			host := strings.SplitN(routeName, "/", 2)[0]
+			for _, route := range routesInfo {
+				route.Host = host
+			}
+		}
 		if len(routes) == 0 {
 			routes = tmpRoutes
 			continue
 		}
 
-		for routeName, route := range tmpRoutes {
+		for routeName, routesInfo := range tmpRoutes {
 			// only add when unknown
 			if _, ok := routes[routeName]; ok {
 				continue
 			}
-			routes[routeName] = route
+			routes[routeName] = routesInfo
 		}
 	}
 
@@ -111,7 +121,7 @@ func (f *RoutesFetcher) updateRoutes() error {
 	return nil
 }
 
-func (f RoutesFetcher) Routes() models.Routes {
+func (f *RoutesFetcher) Routes() models.Routes {
 	if f.routes == nil {
 		return make(models.Routes)
 	}

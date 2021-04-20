@@ -43,7 +43,7 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string, onl
 	for _, rte := range routes {
 		mapTagsRoute[rte.Tags.AppID] = rte.Tags
 	}
-	jobs := make(chan models.Route, len(routes))
+	jobs := make(chan *models.Route, len(routes))
 	errFetch := &errors.ErrFetch{}
 	wg := &sync.WaitGroup{}
 
@@ -82,7 +82,7 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string, onl
 
 	wg.Add(len(routes))
 	for w := 1; w <= 5; w++ {
-		go func(jobs <-chan models.Route, errFetch *errors.ErrFetch) {
+		go func(jobs <-chan *models.Route, errFetch *errors.ErrFetch) {
 			for j := range jobs {
 				newMetrics, err := f.Metric(j, metricPathDefault)
 				if err != nil {
@@ -127,15 +127,13 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string, onl
 				base[k] = metricFamily
 				continue
 			}
-			for _, metric := range metricFamily.Metric {
-				baseMetricFamily.Metric = append(baseMetricFamily.Metric, metric)
-			}
+			baseMetricFamily.Metric = append(baseMetricFamily.Metric, metricFamily.Metric...)
 		}
 	}
 	return base, nil
 }
 
-func (f MetricsFetcher) Metric(route models.Route, metricPathDefault string) (map[string]*dto.MetricFamily, error) {
+func (f MetricsFetcher) Metric(route *models.Route, metricPathDefault string) (map[string]*dto.MetricFamily, error) {
 	reader, err := f.scraper.Scrape(route, metricPathDefault)
 	if err != nil {
 		return nil, err
@@ -220,7 +218,7 @@ func (f MetricsFetcher) cleanMetricLabels(labels []*dto.LabelPair, names ...stri
 	return finalLabels
 }
 
-func (f MetricsFetcher) scrapeError(route models.Route, err error) map[string]*dto.MetricFamily {
+func (f MetricsFetcher) scrapeError(route *models.Route, err error) map[string]*dto.MetricFamily {
 	name := "promfetcher_scrape_error"
 	help := "Promfetcher scrap error on your instance"
 	metric := prometheus.NewCounter(prometheus.CounterOpts{

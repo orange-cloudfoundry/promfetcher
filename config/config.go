@@ -5,8 +5,8 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 
@@ -29,7 +29,8 @@ type GorouterConfig struct {
 type BackendConfig struct {
 	ClientAuthCertificate tls.Certificate
 	MaxConns              int64 `yaml:"max_conns"`
-	TLSPem                `yaml:",inline"` // embed to get cert_chain and private_key for client authentication
+
+	TLSPem `yaml:",inline"` // embed to get cert_chain and private_key for client authentication
 }
 
 var defaultGoroutersConfig = []GorouterConfig{
@@ -250,7 +251,6 @@ func InitConfigFromFile(file *os.File) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-
 
 	b, err := ioutil.ReadAll(file)
 	if err != nil {

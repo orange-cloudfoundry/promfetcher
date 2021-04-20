@@ -39,7 +39,7 @@ func NewBackendFactory(c config.Config) *BackendFactory {
 	}
 }
 
-func (f BackendFactory) NewClient(route models.Route) *http.Client {
+func (f BackendFactory) NewClient(route *models.Route) *http.Client {
 	return &http.Client{
 		Transport: f.factory.New(route.ServerCertDomainSan),
 		Timeout:   30 * time.Second,

@@ -46,18 +46,19 @@ func (ee *ExternalExporter) UnmarshalYAML(unmarshal func(interface{}) error) err
 	return nil
 }
 
-func (ee *ExternalExporter) ToRoute(tags models.Tags) (models.Route, error) {
+func (ee *ExternalExporter) ToRoute(tags models.Tags) (*models.Route, error) {
 	urlValues, err := ee.ParamsToURLValues(tags)
 	if err != nil {
-		return models.Route{}, fmt.Errorf("error on external exporter `%s`: %s", ee.Name, err.Error())
+		return nil, fmt.Errorf("error on external exporter `%s`: %s", ee.Name, err.Error())
 	}
-	return models.Route{
+	return &models.Route{
 		PrivateInstanceID: ee.Name,
 		Tags:              tags,
 		Address:           ee.Host,
 		TLS:               ee.IsTls,
 		URLParams:         urlValues,
 		MetricsPath:       ee.MetricsPath,
+		Host:              ee.Host,
 	}, nil
 }
 

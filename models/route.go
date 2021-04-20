@@ -9,7 +9,7 @@ import (
 
 const ProcessWeb = "web"
 
-type Routes map[string][]Route
+type Routes map[string][]*Route
 
 type Tags struct {
 	ProcessType       string `json:"process_type"`
@@ -36,10 +36,11 @@ type Route struct {
 	URL                 string     `json:"-"`
 	URLParams           url.Values `json:"-"`
 	MetricsPath         string     `json:"-"`
+	Host                string     `json:"host"`
 }
 
-func (rts Routes) FindByOrgSpaceName(org, space, name string) []Route {
-	finalRoutes := make([]Route, 0)
+func (rts Routes) FindByOrgSpaceName(org, space, name string) []*Route {
+	finalRoutes := make([]*Route, 0)
 	exist := make(map[string]bool)
 	for u, routes := range rts {
 		for _, route := range routes {
@@ -62,8 +63,8 @@ func (rts Routes) FindByOrgSpaceName(org, space, name string) []Route {
 	return finalRoutes
 }
 
-func (rts Routes) FindById(appId string) []Route {
-	finalRoutes := make([]Route, 0)
+func (rts Routes) FindById(appId string) []*Route {
+	finalRoutes := make([]*Route, 0)
 	exist := make(map[string]bool)
 	for u, routes := range rts {
 		for _, route := range routes {
@@ -84,15 +85,15 @@ func (rts Routes) FindById(appId string) []Route {
 	return finalRoutes
 }
 
-func (rts Routes) FindByRouteName(routeName string) []Route {
+func (rts Routes) FindByRouteName(routeName string) []*Route {
 	finalRoutes, ok := rts[routeName]
 	if !ok {
-		return []Route{}
+		return []*Route{}
 	}
 	return finalRoutes
 }
 
-func (rts Routes) Find(appIdOrPathOrName string) []Route {
+func (rts Routes) Find(appIdOrPathOrName string) []*Route {
 	tmpContent, err := url.PathUnescape(appIdOrPathOrName)
 	if err == nil {
 		appIdOrPathOrName = tmpContent
