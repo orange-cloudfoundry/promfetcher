@@ -2,6 +2,7 @@ package fetchers
 
 import (
 	"fmt"
+	"net/http"
 	"sync"
 
 	"github.com/orange-cloudfoundry/promfetcher/config"
@@ -33,7 +34,7 @@ func NewMetricsFetcher(scraper *scrapers.Scraper, routesFetcher *RoutesFetcher, 
 	}
 }
 
-func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string, onlyAppMetrics bool) (map[string]*dto.MetricFamily, error) {
+func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string, onlyAppMetrics bool, headers http.Header) (map[string]*dto.MetricFamily, error) {
 
 	routes := f.routesFetcher.Routes().Find(appIdOrPathOrName)
 	if len(routes) == 0 {
@@ -82,9 +83,12 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string, onl
 
 	wg.Add(len(routes))
 	for w := 1; w <= 5; w++ {
-		go func(jobs <-chan *models.Route, errFetch *errors.ErrFetch) {
+		go func(jobs <-chan *models.Route, errFetch *errors.ErrFetch, headers http.Header) {
 			for j := range jobs {
-				newMetrics, err := f.Metric(j, metricPathDefault)
+				if j.Tags.ProcessType == "external_exporter" {
+					headers = nil
+				}
+				newMetrics, err := f.Metric(j, metricPathDefault, headers)
 				if err != nil {
 					if errF, ok := err.(*errors.ErrFetch); ok && (f.externalExporters == nil || len(f.externalExporters) == 0) {
 						muWrite.Lock()
@@ -104,7 +108,7 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string, onl
 				muWrite.Unlock()
 				wg.Done()
 			}
-		}(jobs, errFetch)
+		}(jobs, errFetch, headers)
 	}
 	for _, route := range routes {
 		jobs <- route
@@ -133,8 +137,8 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string, onl
 	return base, nil
 }
 
-func (f MetricsFetcher) Metric(route *models.Route, metricPathDefault string) (map[string]*dto.MetricFamily, error) {
-	reader, err := f.scraper.Scrape(route, metricPathDefault)
+func (f MetricsFetcher) Metric(route *models.Route, metricPathDefault string, headers http.Header) (map[string]*dto.MetricFamily, error) {
+	reader, err := f.scraper.Scrape(route, metricPathDefault, headers)
 	if err != nil {
 		return nil, err
 	}

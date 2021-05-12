@@ -32,7 +32,14 @@ func (a Api) metrics(w http.ResponseWriter, req *http.Request) {
 	}
 
 	_, onlyAppMetrics := req.URL.Query()["only_from_app"]
-	metrics, err := a.metFetcher.Metrics(appIdOrPathOrName, metricPathDefault, onlyAppMetrics)
+
+	headersMetrics := make(http.Header)
+	auth := req.Header.Get("Authorization")
+	if auth != "" {
+		headersMetrics.Set("Authorization", auth)
+	}
+
+	metrics, err := a.metFetcher.Metrics(appIdOrPathOrName, metricPathDefault, onlyAppMetrics, headersMetrics)
 	if err != nil {
 		if errFetch, ok := err.(*errors.ErrFetch); ok {
 			w.WriteHeader(errFetch.Code)

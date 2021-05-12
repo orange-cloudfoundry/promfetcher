@@ -44,7 +44,7 @@ func (s *Scraper) GetOutboundIP() string {
 	return s.outboundIp
 }
 
-func (s Scraper) Scrape(route *models.Route, metricPathDefault string) (io.ReadCloser, error) {
+func (s Scraper) Scrape(route *models.Route, metricPathDefault string, headers http.Header) (io.ReadCloser, error) {
 	scheme := "http"
 	if route.TLS {
 		scheme = "https"
@@ -63,6 +63,11 @@ func (s Scraper) Scrape(route *models.Route, metricPathDefault string) (io.ReadC
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s://%s%s", scheme, route.Address, endpoint), nil)
 	if err != nil {
 		return nil, err
+	}
+	if len(headers) > 0 {
+		for k, v := range headers {
+			req.Header[k] = v
+		}
 	}
 	req.Header.Add("Accept", acceptHeader)
 	req.Header.Add("Accept-Encoding", "gzip")
