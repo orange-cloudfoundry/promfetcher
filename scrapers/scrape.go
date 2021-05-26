@@ -93,10 +93,11 @@ func (s Scraper) Scrape(route *models.Route, metricPathDefault string, headers h
 		if resp.StatusCode >= 400 && resp.StatusCode <= 499 {
 			return nil, errors.ErrNoEndpointFound(
 				fmt.Sprintf(
-					"%s/%s/%s",
+					"%s/%s/%s (status code %d)",
 					route.Tags.OrganizationName,
 					route.Tags.SpaceName,
 					route.Tags.AppName,
+					resp.StatusCode,
 				), endpoint,
 			)
 		}
