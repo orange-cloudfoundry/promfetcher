@@ -15,14 +15,16 @@ import (
 	"github.com/alecthomas/kingpin"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
+	"github.com/prometheus/common/version"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/orange-cloudfoundry/promfetcher/api"
 	"github.com/orange-cloudfoundry/promfetcher/clients"
 	"github.com/orange-cloudfoundry/promfetcher/config"
 	"github.com/orange-cloudfoundry/promfetcher/fetchers"
+	"github.com/orange-cloudfoundry/promfetcher/healthchecks"
 	"github.com/orange-cloudfoundry/promfetcher/scrapers"
 	"github.com/orange-cloudfoundry/promfetcher/userdocs"
-	"github.com/prometheus/common/version"
-	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -48,7 +50,9 @@ func main() {
 
 	backendFactory := clients.NewBackendFactory(*c)
 	scraper := scrapers.NewScraper(backendFactory, c.DB)
-	routeFetcher := fetchers.NewRoutesFetcher(c.Gorouters)
+
+	healthCheck := healthchecks.NewHealthCheck()
+	routeFetcher := fetchers.NewRoutesFetcher(c.Gorouters, healthCheck)
 	metricsFetcher := fetchers.NewMetricsFetcher(scraper, routeFetcher, c.ExternalExporters)
 
 	rtr := mux.NewRouter()
@@ -70,12 +74,15 @@ func main() {
 	}
 
 	srvSignal := make(chan os.Signal, 1)
-	signal.Notify(srvSignal, syscall.SIGTERM, syscall.SIGINT)
+	signal.Notify(srvSignal, syscall.SIGTERM, syscall.SIGINT, syscall.SIGUSR1)
 
 	srvCtx, cancel := context.WithCancel(context.Background())
 
 	go func() {
-		<-srvSignal
+		sig := <-srvSignal
+		if sig == syscall.SIGUSR1 {
+			healthCheck.SetHealth(healthchecks.Degraded)
+		}
 		cancel()
 	}()
 
@@ -87,7 +94,13 @@ func main() {
 
 	go func() {
 		if err = srv.Serve(listener); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %+s\n", err)
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	go func() {
+		if err = http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", c.HealthCheckPort), healthCheck); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen healthcheck: %s\n", err)
 		}
 	}()
 	defer srv.Close()

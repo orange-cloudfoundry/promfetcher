@@ -9,10 +9,12 @@ import (
 	"sync"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/orange-cloudfoundry/promfetcher/config"
+	"github.com/orange-cloudfoundry/promfetcher/healthchecks"
 	"github.com/orange-cloudfoundry/promfetcher/metrics"
 	"github.com/orange-cloudfoundry/promfetcher/models"
-	log "github.com/sirupsen/logrus"
 )
 
 type RoutesFetcher struct {
@@ -20,9 +22,10 @@ type RoutesFetcher struct {
 	routes          *models.Routes
 	goRtrHttpClts   []*http.Client
 	lastSuccessTime time.Time
+	healthCheck     *healthchecks.HealthCheck
 }
 
-func NewRoutesFetcher(confGorouters []config.GorouterConfig) *RoutesFetcher {
+func NewRoutesFetcher(confGorouters []config.GorouterConfig, healthCheck *healthchecks.HealthCheck) *RoutesFetcher {
 	rts := make(models.Routes)
 
 	goRtrHttpClts := make([]*http.Client, 0)
@@ -49,6 +52,7 @@ func NewRoutesFetcher(confGorouters []config.GorouterConfig) *RoutesFetcher {
 		routes:          &rts,
 		lastSuccessTime: time.Now(),
 		goRtrHttpClts:   goRtrHttpClts,
+		healthCheck:     healthCheck,
 	}
 }
 
@@ -62,6 +66,9 @@ func (f *RoutesFetcher) Run() {
 				metrics.ScrapeRouteFailedTotal.With(map[string]string{}).Inc()
 			} else {
 				f.mu.Lock()
+				if f.healthCheck.Health() == healthchecks.Initializing {
+					f.healthCheck.SetHealth(healthchecks.Healthy)
+				}
 				f.lastSuccessTime = time.Now()
 				f.mu.Unlock()
 			}

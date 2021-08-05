@@ -14,9 +14,10 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/orange-cloudfoundry/promfetcher/models"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
+
+	"github.com/orange-cloudfoundry/promfetcher/models"
 )
 
 type GorouterConfig struct {
@@ -94,6 +95,7 @@ type Config struct {
 	Gorouters         []GorouterConfig `yaml:"gorouters,omitempty"`
 	Logging           Log              `yaml:"logging,omitempty"`
 	Port              uint16           `yaml:"port,omitempty"`
+	HealthCheckPort   uint16           `yaml:"health_check_port,omitempty"`
 	EnableSSL         bool             `yaml:"enable_ssl,omitempty"`
 	SSLCertificate    tls.Certificate  `yaml:"-"`
 	TLSPEM            TLSPem           `yaml:"tls_pem,omitempty"`
@@ -125,6 +127,7 @@ var defaultConfig = Config{
 	Gorouters:           defaultGoroutersConfig,
 	Logging:             Log{},
 	Port:                8085,
+	HealthCheckPort:     8080,
 	DisableKeepAlives:   true,
 	MaxIdleConns:        100,
 	MaxIdleConnsPerHost: 2,

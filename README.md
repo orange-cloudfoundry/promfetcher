@@ -94,4 +94,12 @@ Promfetcher expose metrics on `/metrics`:
 
 ## Graceful shutdown
 
-Promfetcher when receiving a SIGINT or SIGTERM signal will stop listening new connections and will wait to finish opened requests before stopping. If opened requests are not finished after 15 seconds the server will be hard closed.
+Promfetcher when receiving a SIGINT or SIGTERM or SIGUSR1 signal will stop listening new connections and will wait to finish opened requests before stopping. If opened requests are not finished after 15 seconds the server will be hard closed.
+
+User can
+
+## Health Check
+
+Health check is available by default on port 8080. If promfetcher is not healthy or not yet healthy it will respond a 503 error, if not it will respond a 200.
+
+User can send a `USR1` signal on promfetcher to set unhealthy on health check in addition to stop gracefully.

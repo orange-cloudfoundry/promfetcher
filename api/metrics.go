@@ -6,8 +6,9 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/orange-cloudfoundry/promfetcher/errors"
 	"github.com/prometheus/common/expfmt"
+
+	"github.com/orange-cloudfoundry/promfetcher/errors"
 )
 
 func (a Api) metrics(w http.ResponseWriter, req *http.Request) {
