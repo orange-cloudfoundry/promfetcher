@@ -17,6 +17,13 @@ import (
 	"github.com/orange-cloudfoundry/promfetcher/models"
 )
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . RoutesFetch
+
+type RoutesFetch interface {
+	Run()
+	Routes() models.Routes
+}
+
 type RoutesFetcher struct {
 	mu              sync.Mutex
 	routes          *models.Routes

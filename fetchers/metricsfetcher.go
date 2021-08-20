@@ -5,15 +5,16 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/prometheus/client_golang/prometheus"
+	dto "github.com/prometheus/client_model/go"
+	"github.com/prometheus/common/expfmt"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/orange-cloudfoundry/promfetcher/config"
 	"github.com/orange-cloudfoundry/promfetcher/errors"
 	"github.com/orange-cloudfoundry/promfetcher/metrics"
 	"github.com/orange-cloudfoundry/promfetcher/models"
 	"github.com/orange-cloudfoundry/promfetcher/scrapers"
-	"github.com/prometheus/client_golang/prometheus"
-	dto "github.com/prometheus/client_model/go"
-	"github.com/prometheus/common/expfmt"
-	log "github.com/sirupsen/logrus"
 )
 
 func ptrString(v string) *string {
@@ -22,11 +23,11 @@ func ptrString(v string) *string {
 
 type MetricsFetcher struct {
 	scraper           *scrapers.Scraper
-	routesFetcher     *RoutesFetcher
+	routesFetcher     RoutesFetch
 	externalExporters config.ExternalExporters
 }
 
-func NewMetricsFetcher(scraper *scrapers.Scraper, routesFetcher *RoutesFetcher, externalExporters config.ExternalExporters) *MetricsFetcher {
+func NewMetricsFetcher(scraper *scrapers.Scraper, routesFetcher RoutesFetch, externalExporters config.ExternalExporters) *MetricsFetcher {
 	return &MetricsFetcher{
 		scraper:           scraper,
 		routesFetcher:     routesFetcher,

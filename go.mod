@@ -18,6 +18,9 @@ require (
 	github.com/karrick/godirwalk v1.16.1 // indirect
 	github.com/lib/pq v1.10.2 // indirect
 	github.com/mattn/go-sqlite3 v1.14.7 // indirect
+	github.com/maxbrunsfeld/counterfeiter/v6 v6.2.3
+	github.com/onsi/ginkgo v1.14.1
+	github.com/onsi/gomega v1.10.4
 	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pivotal-cf/brokerapi/v7 v7.5.0
 	github.com/prometheus/client_golang v1.11.0
