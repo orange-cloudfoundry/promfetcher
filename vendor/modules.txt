@@ -2,6 +2,9 @@
 ## explicit
 code.cloudfoundry.org/lager
 code.cloudfoundry.org/lager/internal/truncate
+# github.com/DATA-DOG/go-sqlmock v1.5.0
+## explicit
+github.com/DATA-DOG/go-sqlmock
 # github.com/alecthomas/kingpin v2.2.6+incompatible
 ## explicit
 github.com/alecthomas/kingpin
