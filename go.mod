@@ -4,7 +4,6 @@ go 1.15
 
 require (
 	code.cloudfoundry.org/lager v1.1.1-0.20191008172124-a9afc05ee5be
-	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/alecthomas/kingpin v2.2.6+incompatible
 	github.com/alecthomas/units v0.0.0-20210208195552-ff826a37aa15 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
@@ -16,6 +15,7 @@ require (
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/jinzhu/gorm v1.9.16
+	github.com/jinzhu/now v1.1.1 // indirect
 	github.com/karrick/godirwalk v1.16.1 // indirect
 	github.com/lib/pq v1.10.2 // indirect
 	github.com/mattn/go-sqlite3 v1.14.7 // indirect
