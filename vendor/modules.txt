@@ -2,9 +2,6 @@
 ## explicit
 code.cloudfoundry.org/lager
 code.cloudfoundry.org/lager/internal/truncate
-# github.com/DATA-DOG/go-sqlmock v1.5.0
-## explicit
-github.com/DATA-DOG/go-sqlmock
 # github.com/alecthomas/kingpin v2.2.6+incompatible
 ## explicit
 github.com/alecthomas/kingpin
@@ -64,6 +61,8 @@ github.com/jinzhu/gorm/dialects/postgres
 github.com/jinzhu/gorm/dialects/sqlite
 # github.com/jinzhu/inflection v1.0.0
 github.com/jinzhu/inflection
+# github.com/jinzhu/now v1.1.1
+## explicit
 # github.com/karrick/godirwalk v1.16.1
 ## explicit
 github.com/karrick/godirwalk
@@ -266,7 +265,3 @@ gopkg.in/tomb.v1
 # gopkg.in/yaml.v2 v2.4.0
 ## explicit
 gopkg.in/yaml.v2
-# gorm.io/driver/sqlite v1.1.4
-## explicit
-# gorm.io/gorm v1.20.7
-## explicit
