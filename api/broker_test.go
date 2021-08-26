@@ -2,7 +2,10 @@ package api_test
 
 import (
 	"encoding/json"
+	"net/http"
+	"net/url"
 
+	"github.com/gorilla/mux"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -17,7 +20,7 @@ var _ = Describe("Api/Broker", func() {
 	var db *gorm.DB
 	var err error
 	var broker *api.Broker
-
+	var router *mux.Router
 
 	BeforeEach(func() {
 		db, err = gorm.Open("sqlite3", "file::memory:?cache=shared")
@@ -36,6 +39,8 @@ var _ = Describe("Api/Broker", func() {
 			"http://localhost:8085",
 			db,
 		)
+
+		router = broker.Handler().(*mux.Router)
 	})
 
 	AfterEach(func() {
@@ -123,4 +128,13 @@ var _ = Describe("Api/Broker", func() {
 
 	})
 
+	Context("Handler", func() {
+		var routeMatch = mux.RouteMatch{}
+		var url = url.URL{Path: "/v2/catalog"}
+		var request = http.Request{Method: "GET", URL: &url}
+
+		It("fails when /v2/catalog route is not found", func() {
+			Expect(router.Match(&request, &routeMatch)).To(BeTrue())
+		})
+	})
 })
