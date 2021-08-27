@@ -2,3 +2,4 @@
 /promfetcher
 /promfetcher.db
 /dist
+*.coverprofile
