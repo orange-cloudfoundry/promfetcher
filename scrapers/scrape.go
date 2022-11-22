@@ -83,7 +83,7 @@ func (s Scraper) Scrape(route *models.Route, metricPathDefault string, headers h
 		}
 		req.URL.RawQuery = urlParamsCurrent.Encode()
 	}
-	client := s.backendFactory.NewClient(route)
+	client := s.backendFactory.NewClient(route, false)
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err

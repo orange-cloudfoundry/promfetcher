@@ -28,10 +28,11 @@ var _ = Describe("Backend", func() {
 				MaxIdleConnsPerHost: 100,
 			})
 
-			client := factory.NewClient(&models.Route{ServerCertDomainSan: "my.san"})
+			client := factory.NewClient(&models.Route{ServerCertDomainSan: "my.san"}, false)
 
 			Expect(client).ToNot(BeNil())
 			Expect(client.Timeout).To(Equal(30 * time.Second))
+			Expect(client.CheckRedirect).ToNot(BeNil())
 
 			httpTrans, ok := client.Transport.(*http.Transport)
 			Expect(ok).To(BeTrue())

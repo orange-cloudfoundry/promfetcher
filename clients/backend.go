@@ -2,6 +2,8 @@ package clients
 
 import (
 	"crypto/tls"
+	"errors"
+	"fmt"
 	"net"
 	"net/http"
 	"time"
@@ -39,7 +41,18 @@ func NewBackendFactory(c config.Config) *BackendFactory {
 	}
 }
 
-func (f BackendFactory) NewClient(route *models.Route) *http.Client {
+func (f BackendFactory) NewClient(route *models.Route, followRedirect bool) *http.Client {
+	if ( ! followRedirect ) {
+		return &http.Client{
+			// Promfetcher doesn't follow redirect : return a clear message to user
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return errors.New(fmt.Sprintf("Promfetcher don't follow redirect : %s redirect to %s.", req.URL, via[0].URL))
+			},
+			Transport: f.factory.New(route.ServerCertDomainSan),
+			Timeout:   30 * time.Second,
+		}
+	}
+
 	return &http.Client{
 		Transport: f.factory.New(route.ServerCertDomainSan),
 		Timeout:   30 * time.Second,
