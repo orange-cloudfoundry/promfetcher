@@ -3,15 +3,27 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/orange-cloudfoundry/promfetcher/models"
 	"github.com/prometheus/common/expfmt"
 
 	"github.com/orange-cloudfoundry/promfetcher/errors"
 )
 
 func (a Api) metrics(w http.ResponseWriter, req *http.Request) {
+	// extract the API version from the requested path (ie: /v2)
+	// and set it to an HTTP header
+	apiVersion := regexp.MustCompile("/v([0-9]+)(?:/|$)").FindStringSubmatch(req.URL.Path)
+	if len(apiVersion) == 2 {
+		req.Header.Set(models.XPromfetcherApiVersion, apiVersion[1])
+	} else {
+		// default to v1
+		req.Header.Set(models.XPromfetcherApiVersion, "1")
+	}
+
 	appIdOrPathOrName, ok := mux.Vars(req)["appIdOrPathOrName"]
 	if !ok {
 		appIdOrPathOrName = req.URL.Query().Get("app")

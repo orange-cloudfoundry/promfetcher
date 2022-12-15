@@ -22,20 +22,37 @@ func Register(rtr *mux.Router, metFetcher *fetchers.MetricsFetcher, broker *Brok
 	}
 
 	handlerMetrics := handlers.CompressHandler(http.HandlerFunc(api.metrics))
-	rtr.Handle("/v1/apps/{appIdOrPathOrName:.*}/metrics", handlerMetrics).
-		Methods(http.MethodGet)
-
-	rtr.Handle("/v1/apps/metrics", handlerMetrics).
-		Methods(http.MethodGet)
-
 	handlerOnlyAppMetrics := handlers.CompressHandler(forceOnlyForApp(http.HandlerFunc(api.metrics)))
 
-	rtr.Handle("/v1/apps/{appIdOrPathOrName:.*}/only-app-metrics", handlerOnlyAppMetrics).
+	// API v1: deprecated
+	routerApiV1 := rtr.PathPrefix("/v1").Subrouter()
+	routerApiV1.Handle("/apps/{appIdOrPathOrName:.*}/metrics", handlerMetrics).
 		Methods(http.MethodGet)
 
-	rtr.Handle("/v1/apps/only-app-metrics", handlerOnlyAppMetrics).
+	routerApiV1.Handle("/apps/metrics", handlerMetrics).
 		Methods(http.MethodGet)
 
+	routerApiV1.Handle("/apps/{appIdOrPathOrName:.*}/only-app-metrics", handlerOnlyAppMetrics).
+		Methods(http.MethodGet)
+
+	routerApiV1.Handle("/apps/only-app-metrics", handlerOnlyAppMetrics).
+		Methods(http.MethodGet)
+
+	// API v2
+	routerApiV2 := rtr.PathPrefix("/v2").Subrouter()
+	routerApiV2.Handle("/apps/{appIdOrPathOrName:.*}/metrics", handlerMetrics).
+		Methods(http.MethodGet)
+
+	routerApiV2.Handle("/apps/metrics", handlerMetrics).
+		Methods(http.MethodGet)
+
+	routerApiV2.Handle("/apps/{appIdOrPathOrName:.*}/only-app-metrics", handlerOnlyAppMetrics).
+		Methods(http.MethodGet)
+
+	routerApiV2.Handle("/apps/only-app-metrics", handlerOnlyAppMetrics).
+		Methods(http.MethodGet)
+
+	// non-API routes
 	rtr.NewRoute().MatcherFunc(func(req *http.Request, m *mux.RouteMatch) bool {
 		return strings.HasPrefix(req.URL.Path, "/broker/v2")
 	}).Handler(http.StripPrefix("/broker", broker.Handler()))

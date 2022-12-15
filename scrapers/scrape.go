@@ -12,9 +12,8 @@ import (
 	"github.com/orange-cloudfoundry/promfetcher/clients"
 	"github.com/orange-cloudfoundry/promfetcher/errors"
 	"github.com/orange-cloudfoundry/promfetcher/models"
+	"github.com/prometheus/common/expfmt"
 )
-
-const acceptHeader = `application/openmetrics-text; version=0.0.1,text/plain;version=0.0.4;q=0.5,*/*;q=0.1`
 
 type Scraper struct {
 	backendFactory *clients.BackendFactory
@@ -69,7 +68,14 @@ func (s Scraper) Scrape(route *models.Route, metricPathDefault string, headers h
 			req.Header[k] = v
 		}
 	}
-	req.Header.Add("Accept", acceptHeader)
+	// Prometheus parser is not OpenMetrics compliant
+	// See: prometheus/common issues: 214, 829
+	req.Header.Set("Accept", string(expfmt.FmtText))
+	// keep the OpenMetrics accept HTTP header for the /v1 endpoint
+	if req.Header.Get(models.XPromfetcherApiVersion) == "1" {
+		req.Header.Set(models.XPromfetcherApiVersion, "1")
+		req.Header.Set("Accept", `application/openmetrics-text; version=0.0.1,text/plain;version=0.0.4;q=0.5,*/*;q=0.1`)
+	}
 	req.Header.Add("Accept-Encoding", "gzip")
 	req.Header.Set("X-Prometheus-Scrape-Timeout-Seconds", fmt.Sprintf("%f", (30*time.Second).Seconds()))
 	req.Header.Set("X-Forwarded-Proto", scheme)
