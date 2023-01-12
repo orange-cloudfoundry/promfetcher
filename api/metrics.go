@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -35,6 +36,15 @@ func (a Api) metrics(w http.ResponseWriter, req *http.Request) {
 	_, onlyAppMetrics := req.URL.Query()["only_from_app"]
 
 	headersMetrics := make(http.Header)
+	// extract the API version from the requested path (ie: /v2)
+	// and set it to an HTTP header
+	apiVersion := regexp.MustCompile("/v([0-9]+)(?:/|$)").FindStringSubmatch(req.URL.Path)
+	if len(apiVersion) == 2 && apiVersion[1] != "1" {
+		headersMetrics.Set("Accept", string(expfmt.FmtText))
+	} else {
+		headersMetrics.Set("Accept", `application/openmetrics-text; version=0.0.1,text/plain;version=0.0.4;q=0.5,*/*;q=0.1`)
+	}
+
 	auth := req.Header.Get("Authorization")
 	if auth != "" {
 		headersMetrics.Set("Authorization", auth)

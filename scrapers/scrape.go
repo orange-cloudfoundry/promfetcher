@@ -14,8 +14,6 @@ import (
 	"github.com/orange-cloudfoundry/promfetcher/models"
 )
 
-const acceptHeader = `application/openmetrics-text; version=0.0.1,text/plain;version=0.0.4;q=0.5,*/*;q=0.1`
-
 type Scraper struct {
 	backendFactory *clients.BackendFactory
 	db             *gorm.DB
@@ -69,7 +67,6 @@ func (s Scraper) Scrape(route *models.Route, metricPathDefault string, headers h
 			req.Header[k] = v
 		}
 	}
-	req.Header.Add("Accept", acceptHeader)
 	req.Header.Add("Accept-Encoding", "gzip")
 	req.Header.Set("X-Prometheus-Scrape-Timeout-Seconds", fmt.Sprintf("%f", (30*time.Second).Seconds()))
 	req.Header.Set("X-Forwarded-Proto", scheme)
