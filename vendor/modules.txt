@@ -1,7 +1,6 @@
-# code.cloudfoundry.org/lager v1.1.1-0.20191008172124-a9afc05ee5be
+# code.cloudfoundry.org/lager v2.0.0+incompatible
 ## explicit
 code.cloudfoundry.org/lager
-code.cloudfoundry.org/lager/internal/truncate
 # github.com/alecthomas/kingpin/v2 v2.3.2
 ## explicit; go 1.17
 github.com/alecthomas/kingpin/v2
