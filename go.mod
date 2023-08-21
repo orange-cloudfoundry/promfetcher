@@ -6,7 +6,7 @@ require (
 	code.cloudfoundry.org/lager v1.1.1-0.20191008172124-a9afc05ee5be
 	github.com/alecthomas/kingpin/v2 v2.3.2
 	github.com/gobuffalo/packr/v2 v2.8.3
-	github.com/google/uuid v1.3.0
+	github.com/google/uuid v1.3.1
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/jinzhu/gorm v1.9.16
