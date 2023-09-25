@@ -3,7 +3,7 @@ module github.com/orange-cloudfoundry/promfetcher
 go 1.21
 
 require (
-	code.cloudfoundry.org/lager v1.1.1-0.20191008172124-a9afc05ee5be
+	code.cloudfoundry.org/lager v2.0.0+incompatible
 	github.com/alecthomas/kingpin/v2 v2.3.2
 	github.com/gobuffalo/packr/v2 v2.8.3
 	github.com/google/uuid v1.3.1
