@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	code.cloudfoundry.org/lager v2.0.0+incompatible
-	github.com/alecthomas/kingpin/v2 v2.3.2
+	github.com/alecthomas/kingpin/v2 v2.4.0
 	github.com/gobuffalo/packr/v2 v2.8.3
 	github.com/google/uuid v1.4.0
 	github.com/gorilla/handlers v1.5.2
