@@ -40,7 +40,7 @@ func (a Api) metrics(w http.ResponseWriter, req *http.Request) {
 	// and set it to an HTTP header
 	apiVersion := regexp.MustCompile("/v([0-9]+)(?:/|$)").FindStringSubmatch(req.URL.Path)
 	if len(apiVersion) == 2 && apiVersion[1] != "1" {
-		headersMetrics.Set("Accept", string(expfmt.FmtText))
+		headersMetrics.Set("Accept", string(expfmt.NewFormat(expfmt.TypeTextPlain)))
 	} else {
 		headersMetrics.Set("Accept", `application/openmetrics-text; version=0.0.1,text/plain;version=0.0.4;q=0.5,*/*;q=0.1`)
 	}
