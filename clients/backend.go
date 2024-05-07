@@ -28,7 +28,6 @@ func NewBackendFactory(c config.Config) *BackendFactory {
 				DialContext: (&net.Dialer{
 					Timeout:   30 * time.Second,
 					KeepAlive: 30 * time.Second,
-					DualStack: true,
 				}).DialContext,
 				DisableKeepAlives:   c.DisableKeepAlives,
 				MaxIdleConns:        c.MaxIdleConns,
