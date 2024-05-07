@@ -2,7 +2,7 @@ package scrapers_test
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 
@@ -75,7 +75,7 @@ var _ = Describe("Scraper", func() {
 			Expect(err).ShouldNot(HaveOccurred())
 			defer resp.Close()
 
-			body, err := ioutil.ReadAll(resp)
+			body, err := io.ReadAll(resp)
 			Expect(err).ShouldNot(HaveOccurred())
 			Expect(string(body)).To(Equal(content))
 		})

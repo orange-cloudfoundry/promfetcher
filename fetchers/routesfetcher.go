@@ -2,7 +2,7 @@ package fetchers
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"strings"
@@ -96,7 +96,7 @@ func (f *RoutesFetcher) updateRoutes() error {
 		}
 		defer resp.Body.Close()
 
-		b, err := ioutil.ReadAll(resp.Body)
+		b, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return err
 		}
