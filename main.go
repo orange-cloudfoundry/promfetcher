@@ -143,7 +143,6 @@ func makeListener(c *config.Config) (net.Listener, error) {
 		ClientCAs:    rootCAs,
 	}
 
-	tlsConfig.BuildNameToCertificate()
 	listener, err := net.Listen("tcp", listenAddr)
 	if err != nil {
 		return nil, err
