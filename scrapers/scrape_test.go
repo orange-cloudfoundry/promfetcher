@@ -2,12 +2,12 @@ package scrapers_test
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 
 	"github.com/jinzhu/gorm"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/ghttp"
 	"github.com/orange-cloudfoundry/promfetcher/clients"
@@ -75,7 +75,7 @@ var _ = Describe("Scraper", func() {
 			Expect(err).ShouldNot(HaveOccurred())
 			defer resp.Close()
 
-			body, err := ioutil.ReadAll(resp)
+			body, err := io.ReadAll(resp)
 			Expect(err).ShouldNot(HaveOccurred())
 			Expect(string(body)).To(Equal(content))
 		})

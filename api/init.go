@@ -1,10 +1,11 @@
 package api
 
 import (
+	log "github.com/sirupsen/logrus"
+	"io/fs"
 	"net/http"
 	"strings"
 
-	"github.com/gobuffalo/packr/v2"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/orange-cloudfoundry/promfetcher/fetchers"
@@ -57,8 +58,11 @@ func Register(rtr *mux.Router, metFetcher *fetchers.MetricsFetcher, broker *Brok
 		return strings.HasPrefix(req.URL.Path, "/broker/v2")
 	}).Handler(http.StripPrefix("/broker", broker.Handler()))
 
-	boxAsset := packr.New("userdocs_assets", "../userdocs/assets")
-	rtr.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(boxAsset)))
+	htmlContent, err := fs.Sub(userdocs.EmbededUserDoc, "assets")
+	if err != nil {
+		log.Fatal(err)
+	}
+	rtr.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.FS(htmlContent))))
 	rtr.Handle("/doc", userdocs)
 	rtr.Handle("/metrics", promhttp.Handler())
 }

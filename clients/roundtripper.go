@@ -26,7 +26,6 @@ func (t *FactoryRoundTripper) New(expectedServerName string) http.RoundTripper {
 	dialContext := (&net.Dialer{
 		Timeout:   30 * time.Second,
 		KeepAlive: 30 * time.Second,
-		DualStack: true,
 	}).DialContext
 	if t.Template.DialContext != nil {
 		dialContext = t.Template.DialContext

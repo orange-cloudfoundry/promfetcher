@@ -28,7 +28,6 @@ func NewBackendFactory(c config.Config) *BackendFactory {
 				DialContext: (&net.Dialer{
 					Timeout:   30 * time.Second,
 					KeepAlive: 30 * time.Second,
-					DualStack: true,
 				}).DialContext,
 				DisableKeepAlives:   c.DisableKeepAlives,
 				MaxIdleConns:        c.MaxIdleConns,
@@ -47,13 +46,13 @@ func (f BackendFactory) NewClient(route *models.Route, followRedirect bool) *htt
 		Timeout:   30 * time.Second,
 	}
 
-	if ( ! followRedirect ) {
+	if !followRedirect {
 		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-			if ( len(via) == 0 ) {
-				return errors.New(fmt.Sprintf("empty previous request for redirect %s, should not happen !", req.URL))
+			if len(via) == 0 {
+				return fmt.Errorf("empty previous request for redirect %s, should not happen", req.URL)
 			}
 
-			if (req.URL.Host == via[0].URL.Host) {
+			if req.URL.Host == via[0].URL.Host {
 				// legitimate redirect (like relative redirect) then continue (just for one hop)
 				return nil
 			}
@@ -62,6 +61,6 @@ func (f BackendFactory) NewClient(route *models.Route, followRedirect bool) *htt
 			return errors.New("external redirect detected or too many redirect: give metric_path parameter with direct endpoint to app metrics")
 		}
 	}
-	
+
 	return client
 }
