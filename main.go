@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -93,13 +94,13 @@ func main() {
 	srv := &http.Server{Handler: rtr}
 
 	go func() {
-		if err = srv.Serve(listener); err != nil && err != http.ErrServerClosed {
+		if err = srv.Serve(listener); err != nil && !errors.Is(http.ErrServerClosed, err) {
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
 
 	go func() {
-		if err = http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", c.HealthCheckPort), healthCheck); err != nil && err != http.ErrServerClosed {
+		if err = http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", c.HealthCheckPort), healthCheck); err != nil && !errors.Is(http.ErrServerClosed, err) {
 			log.Fatalf("listen healthcheck: %s\n", err)
 		}
 	}()

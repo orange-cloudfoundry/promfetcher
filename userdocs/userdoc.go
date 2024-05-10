@@ -29,6 +29,9 @@ func NewUserDoc(baseUrl string) *UserDoc {
 		panic(fmt.Sprintf("Cannot parse template 'main.html': %s", err.Error()))
 	}
 	content, err := EmbededUserDoc.ReadDir(".")
+	if err != nil {
+		panic(err)
+	}
 	for _, entry := range content {
 		if entry.Name() == "main.html" {
 			continue

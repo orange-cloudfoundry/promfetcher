@@ -49,7 +49,7 @@ func (f BackendFactory) NewClient(route *models.Route, followRedirect bool) *htt
 	if !followRedirect {
 		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 			if len(via) == 0 {
-				return errors.New(fmt.Sprintf("empty previous request for redirect %s, should not happen !", req.URL))
+				return fmt.Errorf("empty previous request for redirect %s, should not happen", req.URL)
 			}
 
 			if req.URL.Host == via[0].URL.Host {

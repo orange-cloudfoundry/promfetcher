@@ -247,7 +247,7 @@ func (f MetricsFetcher) scrapeError(route *models.Route, err error) map[string]*
 	metric.Write(&dtoMetric)
 	metricType := dto.MetricType_COUNTER
 	return map[string]*dto.MetricFamily{
-		"promfetcher_scrape_error": &dto.MetricFamily{
+		"promfetcher_scrape_error": {
 			Name:   ptrString(name),
 			Help:   ptrString(help),
 			Type:   &metricType,
@@ -281,7 +281,7 @@ func (f MetricsFetcher) scrapeExternalExporterError(tags models.Tags, externalEx
 	metric.Write(&dtoMetric)
 	metricType := dto.MetricType_COUNTER
 	return map[string]*dto.MetricFamily{
-		"promfetcher_scrape_external_exporter_error": &dto.MetricFamily{
+		"promfetcher_scrape_external_exporter_error": {
 			Name:   ptrString(name),
 			Help:   ptrString(help),
 			Type:   &metricType,
