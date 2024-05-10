@@ -87,8 +87,20 @@ func markdown(s interface{}) template.HTML {
 }
 
 func rawContent(s interface{}) (template.HTML, error) {
-	tplTxt, err := boxTemplates.FindString(fmt.Sprint(s))
-	return template.HTML(tplTxt), err
+	content, err := EmbededUserDoc.ReadDir("")
+	if err != nil {
+		panic(err)
+	}
+	for _, file := range content {
+		if strings.Contains(fmt.Sprint(s), file.Name()) {
+			data, err := EmbededUserDoc.ReadFile(file.Name())
+			if err != nil {
+				panic(err)
+			}
+			return template.HTML(data), nil
+		}
+	}
+	return "", fmt.Errorf("file not found in embedded content: %s", s)
 }
 
 func parse(s, value interface{}) (template.HTML, error) {
