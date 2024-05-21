@@ -24,6 +24,7 @@ import (
 	"github.com/orange-cloudfoundry/promfetcher/config"
 	"github.com/orange-cloudfoundry/promfetcher/fetchers"
 	"github.com/orange-cloudfoundry/promfetcher/healthchecks"
+	"github.com/orange-cloudfoundry/promfetcher/mbus"
 	"github.com/orange-cloudfoundry/promfetcher/scrapers"
 	"github.com/orange-cloudfoundry/promfetcher/userdocs"
 )
@@ -52,8 +53,11 @@ func main() {
 	backendFactory := clients.NewBackendFactory(*c)
 	scraper := scrapers.NewScraper(backendFactory, c.DB)
 
+	natsReconnected := make(chan mbus.Signal)
+	natsClient := mbus.Connect(c, natsReconnected)
+
 	healthCheck := healthchecks.NewHealthCheck()
-	routeFetcher := fetchers.NewRoutesFetcher(c.Gorouters, healthCheck)
+	routeFetcher := fetchers.NewRoutesFetcher(natsClient, c, natsReconnected, healthCheck)
 	metricsFetcher := fetchers.NewMetricsFetcher(scraper, routeFetcher, c.ExternalExporters)
 
 	rtr := mux.NewRouter()
@@ -67,15 +71,16 @@ func main() {
 		userdocs.NewUserDoc(c.BaseURL),
 	)
 
-	log.Info("Init route fetcher ...")
-	routeFetcher.Run()
-
 	if !c.NotExitWhenConnFailed {
 		go checkDbConnection(c.DB)
 	}
 
 	srvSignal := make(chan os.Signal, 1)
 	signal.Notify(srvSignal, syscall.SIGTERM, syscall.SIGINT, syscall.SIGUSR1)
+
+	log.Info("Init route fetcher ...")
+	ready := make(chan struct{})
+	routeFetcher.Run(srvSignal, ready)
 
 	srvCtx, cancel := context.WithCancel(context.Background())
 

@@ -73,12 +73,10 @@ This is useful for authentication purpose, for example:
 
 ### How does it work?
 
-Promfetcher only needs [gorouter] and will read route table from it.
+Promfetcher only needs [NATS](https://nats.io/) an infrastructure that allows data exchange, segmented in the form of messages (We call this a "message oriented middleware"). Promfetcher subscribes to NATS in order to receive messages about routes and then manages its own routing table in memory.
 
 When asking metrics for an App, Promfetcher will asynchronously call all App instances
 (provided by the gorouter routing table) metrics endpoint and merge them together with new labels.
-
-[gorouter]: https://github.com/cloudfoundry/gorouter
 
 Example, given an App with metrics from instance 0:
 
