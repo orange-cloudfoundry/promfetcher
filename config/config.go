@@ -20,11 +20,26 @@ import (
 	"github.com/orange-cloudfoundry/promfetcher/models"
 )
 
-type GorouterConfig struct {
-	Host string `yaml:"host"`
-	Port uint16 `yaml:"port"`
-	User string `yaml:"user"`
-	Pass string `yaml:"pass"`
+type NatsConfig struct {
+	Hosts                 []NatsHost       `yaml:"hosts"`
+	User                  string           `yaml:"user"`
+	Pass                  string           `yaml:"pass"`
+	TLSEnabled            bool             `yaml:"tls_enabled"`
+	CACerts               string           `yaml:"ca_certs"`
+	CAPool                *x509.CertPool   `yaml:"-"`
+	ClientAuthCertificate tls.Certificate  `yaml:"-"`
+	TLSPem                `yaml:",inline"` // embed to get cert_chain and private_key for client authentication
+}
+
+type NatsHost struct {
+	Hostname string
+	Port     uint16
+}
+
+var defaultNatsConfig = NatsConfig{
+	Hosts: []NatsHost{{Hostname: "localhost", Port: 4222}},
+	User:  "",
+	Pass:  "",
 }
 
 type BackendConfig struct {
@@ -32,15 +47,6 @@ type BackendConfig struct {
 	MaxConns              int64 `yaml:"max_conns"`
 
 	TLSPem `yaml:",inline"` // embed to get cert_chain and private_key for client authentication
-}
-
-var defaultGoroutersConfig = []GorouterConfig{
-	{
-		Host: "localhost",
-		Port: 8080,
-		User: "",
-		Pass: "",
-	},
 }
 
 type BrokerConfig struct {
@@ -92,16 +98,22 @@ type TLSPem struct {
 }
 
 type Config struct {
-	Gorouters         []GorouterConfig `yaml:"gorouters,omitempty"`
-	Logging           Log              `yaml:"logging,omitempty"`
-	Port              uint16           `yaml:"port,omitempty"`
-	HealthCheckPort   uint16           `yaml:"health_check_port,omitempty"`
-	EnableSSL         bool             `yaml:"enable_ssl,omitempty"`
-	SSLCertificate    tls.Certificate  `yaml:"-"`
-	TLSPEM            TLSPem           `yaml:"tls_pem,omitempty"`
-	CACerts           string           `yaml:"ca_certs,omitempty"`
-	CAPool            *x509.CertPool   `yaml:"-"`
-	SkipSSLValidation bool             `yaml:"skip_ssl_validation,omitempty"`
+	Nats                        NatsConfig      `yaml:"nats,omitempty"`
+	NatsClientPingInterval      time.Duration   `yaml:"nats_client_ping_interval,omitempty"`
+	NatsClientMessageBufferSize int             `yaml:"-"`
+	EnableHTTP2                 bool            `yaml:"enable_http2"`
+	DropletStaleThreshold       time.Duration   `yaml:"droplet_stale_threshold,omitempty"`
+	StartResponseDelayInterval  time.Duration   `yaml:"start_response_delay_interval,omitempty"`
+	Index                       uint            `yaml:"index,omitempty"`
+	Logging                     Log             `yaml:"logging,omitempty"`
+	Port                        uint16          `yaml:"port,omitempty"`
+	HealthCheckPort             uint16          `yaml:"health_check_port,omitempty"`
+	EnableSSL                   bool            `yaml:"enable_ssl,omitempty"`
+	SSLCertificate              tls.Certificate `yaml:"-"`
+	TLSPEM                      TLSPem          `yaml:"tls_pem,omitempty"`
+	CACerts                     string          `yaml:"ca_certs,omitempty"`
+	CAPool                      *x509.CertPool  `yaml:"-"`
+	SkipSSLValidation           bool            `yaml:"skip_ssl_validation,omitempty"`
 
 	Backends BackendConfig `yaml:"backends,omitempty"`
 
@@ -124,18 +136,23 @@ type Config struct {
 }
 
 var defaultConfig = Config{
-	Gorouters:           defaultGoroutersConfig,
-	Logging:             Log{},
-	Port:                8085,
-	HealthCheckPort:     8080,
-	DisableKeepAlives:   true,
-	MaxIdleConns:        100,
-	MaxIdleConnsPerHost: 2,
-	SQLCnxMaxIdle:       5,
-	SQLCnxMaxOpen:       10,
-	SQLCnxMaxLife:       "1h",
-	Broker:              defaultBrokerConfig,
-	BaseURL:             "http://localhost:8085",
+	Nats:                       defaultNatsConfig,
+	NatsClientPingInterval:     time.Duration(20 * float64(time.Second)),
+	DropletStaleThreshold:      120 * time.Second,
+	StartResponseDelayInterval: 5 * time.Second,
+	EnableHTTP2:                true,
+	Index:                      0,
+	Logging:                    Log{},
+	Port:                       8085,
+	HealthCheckPort:            8080,
+	DisableKeepAlives:          true,
+	MaxIdleConns:               100,
+	MaxIdleConnsPerHost:        2,
+	SQLCnxMaxIdle:              5,
+	SQLCnxMaxOpen:              10,
+	SQLCnxMaxLife:              "1h",
+	Broker:                     defaultBrokerConfig,
+	BaseURL:                    "http://localhost:8085",
 }
 
 func DefaultConfig() (*Config, error) {
@@ -152,6 +169,21 @@ func (c *Config) Process() error {
 			return fmt.Errorf(errMsg)
 		}
 		c.Backends.ClientAuthCertificate = certificate
+	}
+
+	if c.Nats.TLSEnabled {
+		certificate, err := tls.X509KeyPair([]byte(c.Nats.CertChain), []byte(c.Nats.PrivateKey))
+		if err != nil {
+			errMsg := fmt.Sprintf("Error loading NATS key pair: %s", err.Error())
+			return fmt.Errorf(errMsg)
+		}
+		c.Nats.ClientAuthCertificate = certificate
+
+		certPool := x509.NewCertPool()
+		if ok := certPool.AppendCertsFromPEM([]byte(c.Nats.CACerts)); !ok {
+			return fmt.Errorf("Error while adding CACerts to gorouter's routing-api cert pool: \n%s\n", c.Nats.CACerts)
+		}
+		c.Nats.CAPool = certPool
 	}
 
 	if c.EnableSSL {
@@ -245,7 +277,6 @@ func (c *Config) buildCertPool() error {
 }
 
 func (c *Config) Initialize(configYAML []byte) error {
-	c.Gorouters = make([]GorouterConfig, 0)
 	return yaml.Unmarshal(configYAML, &c)
 }
 
@@ -271,4 +302,18 @@ func InitConfigFromFile(file *os.File) (*Config, error) {
 	}
 
 	return c, nil
+}
+
+func (c *Config) NatsServers() []string {
+	var natsServers []string
+	for _, host := range c.Nats.Hosts {
+		uri := url.URL{
+			Scheme: "nats",
+			User:   url.UserPassword(c.Nats.User, c.Nats.Pass),
+			Host:   fmt.Sprintf("%s:%d", host.Hostname, host.Port),
+		}
+		natsServers = append(natsServers, uri.String())
+	}
+
+	return natsServers
 }

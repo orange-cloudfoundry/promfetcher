@@ -2,6 +2,7 @@
 package fetchersfakes
 
 import (
+	"os"
 	"sync"
 
 	"github.com/orange-cloudfoundry/promfetcher/fetchers"
@@ -19,9 +20,17 @@ type FakeRoutesFetch struct {
 	routesReturnsOnCall map[int]struct {
 		result1 models.Routes
 	}
-	RunStub        func()
+	RunStub        func(<-chan os.Signal, chan<- struct{}) error
 	runMutex       sync.RWMutex
 	runArgsForCall []struct {
+		arg1 <-chan os.Signal
+		arg2 chan<- struct{}
+	}
+	runReturns struct {
+		result1 error
+	}
+	runReturnsOnCall map[int]struct {
+		result1 error
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -32,15 +41,16 @@ func (fake *FakeRoutesFetch) Routes() models.Routes {
 	ret, specificReturn := fake.routesReturnsOnCall[len(fake.routesArgsForCall)]
 	fake.routesArgsForCall = append(fake.routesArgsForCall, struct {
 	}{})
+	stub := fake.RoutesStub
+	fakeReturns := fake.routesReturns
 	fake.recordInvocation("Routes", []interface{}{})
 	fake.routesMutex.Unlock()
-	if fake.RoutesStub != nil {
-		return fake.RoutesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.routesReturns
 	return fakeReturns.result1
 }
 
@@ -79,15 +89,24 @@ func (fake *FakeRoutesFetch) RoutesReturnsOnCall(i int, result1 models.Routes) {
 	}{result1}
 }
 
-func (fake *FakeRoutesFetch) Run() {
+func (fake *FakeRoutesFetch) Run(arg1 <-chan os.Signal, arg2 chan<- struct{}) error {
 	fake.runMutex.Lock()
+	ret, specificReturn := fake.runReturnsOnCall[len(fake.runArgsForCall)]
 	fake.runArgsForCall = append(fake.runArgsForCall, struct {
-	}{})
-	fake.recordInvocation("Run", []interface{}{})
+		arg1 <-chan os.Signal
+		arg2 chan<- struct{}
+	}{arg1, arg2})
+	stub := fake.RunStub
+	fakeReturns := fake.runReturns
+	fake.recordInvocation("Run", []interface{}{arg1, arg2})
 	fake.runMutex.Unlock()
-	if fake.RunStub != nil {
-		fake.RunStub()
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
 }
 
 func (fake *FakeRoutesFetch) RunCallCount() int {
@@ -96,10 +115,40 @@ func (fake *FakeRoutesFetch) RunCallCount() int {
 	return len(fake.runArgsForCall)
 }
 
-func (fake *FakeRoutesFetch) RunCalls(stub func()) {
+func (fake *FakeRoutesFetch) RunCalls(stub func(<-chan os.Signal, chan<- struct{}) error) {
 	fake.runMutex.Lock()
 	defer fake.runMutex.Unlock()
 	fake.RunStub = stub
+}
+
+func (fake *FakeRoutesFetch) RunArgsForCall(i int) (<-chan os.Signal, chan<- struct{}) {
+	fake.runMutex.RLock()
+	defer fake.runMutex.RUnlock()
+	argsForCall := fake.runArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeRoutesFetch) RunReturns(result1 error) {
+	fake.runMutex.Lock()
+	defer fake.runMutex.Unlock()
+	fake.RunStub = nil
+	fake.runReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeRoutesFetch) RunReturnsOnCall(i int, result1 error) {
+	fake.runMutex.Lock()
+	defer fake.runMutex.Unlock()
+	fake.RunStub = nil
+	if fake.runReturnsOnCall == nil {
+		fake.runReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.runReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
 }
 
 func (fake *FakeRoutesFetch) Invocations() map[string][][]interface{} {
