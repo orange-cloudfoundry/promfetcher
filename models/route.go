@@ -135,6 +135,7 @@ func (rts Routes) RegisterRoute(uri Uri, route *Route) {
 	} else {
 		r := make([]*Route, 0)
 		r = append(r, route)
+		log.Debugf("register route for uri %s and instance %s", string(uri), route.Tags.InstanceID)
 		rts[routekey] = r
 	}
 }

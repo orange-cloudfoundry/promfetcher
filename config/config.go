@@ -136,23 +136,25 @@ type Config struct {
 }
 
 var defaultConfig = Config{
-	Nats:                       defaultNatsConfig,
-	NatsClientPingInterval:     time.Duration(20 * float64(time.Second)),
-	DropletStaleThreshold:      120 * time.Second,
-	StartResponseDelayInterval: 5 * time.Second,
-	EnableHTTP2:                true,
-	Index:                      0,
-	Logging:                    Log{},
-	Port:                       8085,
-	HealthCheckPort:            8080,
-	DisableKeepAlives:          true,
-	MaxIdleConns:               100,
-	MaxIdleConnsPerHost:        2,
-	SQLCnxMaxIdle:              5,
-	SQLCnxMaxOpen:              10,
-	SQLCnxMaxLife:              "1h",
-	Broker:                     defaultBrokerConfig,
-	BaseURL:                    "http://localhost:8085",
+	Nats:                   defaultNatsConfig,
+	NatsClientPingInterval: time.Duration(20 * float64(time.Second)),
+	DropletStaleThreshold:  120 * time.Second,
+	// This is set to twice the defaults from the NATS library
+	NatsClientMessageBufferSize: 131072,
+	StartResponseDelayInterval:  5 * time.Second,
+	EnableHTTP2:                 true,
+	Index:                       0,
+	Logging:                     Log{},
+	Port:                        8085,
+	HealthCheckPort:             8080,
+	DisableKeepAlives:           true,
+	MaxIdleConns:                100,
+	MaxIdleConnsPerHost:         2,
+	SQLCnxMaxIdle:               5,
+	SQLCnxMaxOpen:               10,
+	SQLCnxMaxLife:               "1h",
+	Broker:                      defaultBrokerConfig,
+	BaseURL:                     "http://localhost:8085",
 }
 
 func DefaultConfig() (*Config, error) {
