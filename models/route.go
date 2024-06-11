@@ -116,13 +116,17 @@ func (rts Routes) Find(appIdOrPathOrName string) []*Route {
 }
 
 func (rts Routes) RegisterRoute(uri Uri, route *Route) {
+	if route == nil {
+		log.Warn("Cannot register nil route")
+		return
+	}
 	routekey := uri.RouteKey()
 	routes, ok := rts[routekey]
 
 	if ok {
 		found := false
 		for _, r := range routes {
-			if r.Equal(route) {
+			if route.Equal(r) {
 				found = true
 				break
 			}
@@ -141,12 +145,16 @@ func (rts Routes) RegisterRoute(uri Uri, route *Route) {
 }
 
 func (rts Routes) UnregisterRoute(uri Uri, route *Route) {
+	if route == nil {
+		log.Warn("Cannot unregister nil route")
+		return
+	}
 	routekey := uri.RouteKey()
 	routes, ok := rts[routekey]
 
 	if ok {
 		for idx, r := range routes {
-			if r.Equal(route) {
+			if route.Equal(r) {
 				log.Debugf("unregister route for uri %s and instance %s", string(uri), route.Tags.InstanceID)
 				// Trick for deleting an element from a slice
 				size := len(routes)
