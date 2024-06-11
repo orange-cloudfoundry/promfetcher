@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"sync"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -16,6 +18,7 @@ import (
 	"github.com/orange-cloudfoundry/promfetcher/config"
 	"github.com/orange-cloudfoundry/promfetcher/healthchecks"
 	"github.com/orange-cloudfoundry/promfetcher/mbus"
+	"github.com/orange-cloudfoundry/promfetcher/metrics"
 	"github.com/orange-cloudfoundry/promfetcher/models"
 )
 
@@ -27,9 +30,10 @@ type RoutesFetch interface {
 }
 
 type RoutesFetcher struct {
-	mu          sync.Mutex
-	routes      *models.Routes
-	healthCheck *healthchecks.HealthCheck
+	mu              sync.Mutex
+	routes          *models.Routes
+	lastSuccessTime time.Time
+	healthCheck     *healthchecks.HealthCheck
 
 	mbusClient       mbus.Client
 	subscription     *nats.Subscription
@@ -77,8 +81,7 @@ func NewRoutesFetcher(mbusClient mbus.Client, c *config.Config, reconnected <-ch
 }
 
 func (f *RoutesFetcher) Run(signals <-chan os.Signal, ready chan<- struct{}) error {
-	entry := log.WithField("component", "fetcher")
-	entry.Info("subscriber-starting")
+	log.Info("subscriber-starting")
 
 	if f.mbusClient == nil {
 		return errors.New("subscriber: nil mbus client")
@@ -95,9 +98,9 @@ func (f *RoutesFetcher) Run(signals <-chan os.Signal, ready chan<- struct{}) err
 	if err != nil {
 		return err
 	}
-
 	close(ready)
-	entry.Info("subscriber-started")
+
+	log.Info("subscriber-started")
 
 	for {
 		select {
@@ -205,6 +208,7 @@ func (f *RoutesFetcher) registerRoute(msg *mbus.Message) {
 	route, err := msg.MakeRoute(f.http2Enabled)
 	if err != nil {
 		log.Errorf("Unable to register route %s", err.Error())
+		metrics.ScrapeRouteFailedTotal.With(map[string]string{}).Inc()
 		return
 	}
 
@@ -214,12 +218,14 @@ func (f *RoutesFetcher) registerRoute(msg *mbus.Message) {
 	for _, uri := range msg.Uris {
 		f.routes.RegisterRoute(uri, route)
 	}
+	metrics.LatestScrapeRoute.With(map[string]string{}).Set(time.Since(f.lastSuccessTime).Seconds())
 }
 
 func (f *RoutesFetcher) unregisterRoute(msg *mbus.Message) {
 	endpoint, err := msg.MakeRoute(f.http2Enabled)
 	if err != nil {
 		log.Errorf("Unable to unregister route %s", err.Error())
+		metrics.ScrapeRouteFailedTotal.With(map[string]string{}).Inc()
 		return
 	}
 
@@ -229,6 +235,7 @@ func (f *RoutesFetcher) unregisterRoute(msg *mbus.Message) {
 	for _, uri := range msg.Uris {
 		f.routes.UnregisterRoute(uri, endpoint)
 	}
+	metrics.LatestScrapeRoute.With(map[string]string{}).Set(time.Since(f.lastSuccessTime).Seconds())
 }
 
 func (f *RoutesFetcher) Routes() models.Routes {
@@ -236,4 +243,17 @@ func (f *RoutesFetcher) Routes() models.Routes {
 		return make(models.Routes)
 	}
 	return *f.routes
+}
+
+func (f *RoutesFetcher) RouteHandler(w http.ResponseWriter, req *http.Request) {
+	headers := &http.Header{}
+	auth := req.Header.Get("Authorization")
+	if auth != "" {
+		headers.Set("Authorization", auth)
+	}
+	headers.Set("Content-Type", "application/json")
+
+	routes := f.Routes().String()
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(routes))
 }

@@ -62,7 +62,7 @@ func main() {
 
 	rtr := mux.NewRouter()
 	api.Register(
-		rtr, metricsFetcher,
+		rtr, metricsFetcher, routeFetcher,
 		api.NewBroker(
 			c.Broker,
 			c.BaseURL,
@@ -76,11 +76,16 @@ func main() {
 	}
 
 	srvSignal := make(chan os.Signal, 1)
-	signal.Notify(srvSignal, syscall.SIGTERM, syscall.SIGINT, syscall.SIGUSR1)
+	signal.Notify(srvSignal, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGUSR1)
 
 	log.Info("Init route fetcher ...")
 	ready := make(chan struct{})
-	routeFetcher.Run(srvSignal, ready)
+
+	go func() {
+		if err = routeFetcher.Run(srvSignal, ready); err != nil {
+			log.Fatalf("routeFetcher: %s\n", err)
+		}
+	}()
 
 	srvCtx, cancel := context.WithCancel(context.Background())
 
@@ -110,6 +115,9 @@ func main() {
 		}
 	}()
 	defer srv.Close()
+
+	<-ready
+	healthCheck.SetHealth(healthchecks.Healthy)
 
 	<-srvCtx.Done()
 

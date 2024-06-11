@@ -1,10 +1,11 @@
 package api
 
 import (
-	log "github.com/sirupsen/logrus"
 	"io/fs"
 	"net/http"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -17,7 +18,7 @@ type Api struct {
 	metFetcher *fetchers.MetricsFetcher
 }
 
-func Register(rtr *mux.Router, metFetcher *fetchers.MetricsFetcher, broker *Broker, userdocs *userdocs.UserDoc) {
+func Register(rtr *mux.Router, metFetcher *fetchers.MetricsFetcher, routesFetcher *fetchers.RoutesFetcher, broker *Broker, userdocs *userdocs.UserDoc) {
 	api := &Api{
 		metFetcher: metFetcher,
 	}
@@ -65,4 +66,5 @@ func Register(rtr *mux.Router, metFetcher *fetchers.MetricsFetcher, broker *Brok
 	rtr.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.FS(htmlContent))))
 	rtr.Handle("/doc", userdocs)
 	rtr.Handle("/metrics", promhttp.Handler())
+	rtr.HandleFunc("/routes", routesFetcher.RouteHandler).Methods(http.MethodGet)
 }
