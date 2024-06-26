@@ -21,7 +21,7 @@ require (
 	github.com/pivotal-cf/brokerapi/v7 v7.5.0
 	github.com/prometheus/client_golang v1.19.1
 	github.com/prometheus/client_model v0.6.1
-	github.com/prometheus/common v0.54.0
+	github.com/prometheus/common v0.55.0
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/sirupsen/logrus v1.9.3
 	golang.org/x/text v0.16.0
@@ -45,6 +45,7 @@ require (
 	github.com/klauspost/compress v1.17.8 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/mattn/go-sqlite3 v1.14.22 // indirect
+	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
