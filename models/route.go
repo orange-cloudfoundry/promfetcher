@@ -48,6 +48,10 @@ func (rts Routes) FindByOrgSpaceName(org, space, name string) []*Route {
 	exist := make(map[string]bool)
 	for u, routes := range rts {
 		for _, route := range routes {
+			if route == nil {
+				log.Debugf("Route is nil for %s", string(u))
+				continue
+			}
 			route.URL = string(u)
 			if route.Tags.ProcessType != ProcessWeb {
 				continue
@@ -72,6 +76,10 @@ func (rts Routes) FindById(appId string) []*Route {
 	exist := make(map[string]bool)
 	for u, routes := range rts {
 		for _, route := range routes {
+			if route == nil {
+				log.Debugf("Route is nil for %s", string(u))
+				continue
+			}
 			route.URL = string(u)
 			if route.Tags.ProcessType != ProcessWeb {
 				continue
