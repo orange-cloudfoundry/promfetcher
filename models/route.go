@@ -133,9 +133,13 @@ func (rts Routes) RegisterRoute(uri Uri, route *Route) {
 
 	if ok {
 		found := false
-		for _, r := range routes {
+		for idx, r := range routes {
 			if route.Equal(r) {
 				found = true
+				// route is updated
+				log.Debugf("update route for uri %s and instance %s", string(uri), route.Tags.InstanceID)
+				routes[idx] = route
+				rts[routekey] = routes
 				break
 			}
 		}
