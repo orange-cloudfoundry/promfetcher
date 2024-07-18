@@ -212,8 +212,10 @@ func (f *RoutesFetcher) registerRoute(msg *mbus.Message) {
 		return
 	}
 
-	f.mu.Lock()
-	defer f.mu.Unlock()
+	if route.Tags.AppID == "" {
+		log.Debugf("Dropped because it is not an app route (%s)", msg.Uris[0])
+		return
+	}
 
 	for _, uri := range msg.Uris {
 		f.routes.RegisterRoute(uri, route)
@@ -229,8 +231,10 @@ func (f *RoutesFetcher) unregisterRoute(msg *mbus.Message) {
 		return
 	}
 
-	f.mu.Lock()
-	defer f.mu.Unlock()
+	if endpoint.Tags.AppID == "" {
+		log.Debugf("Dropped because it is not an app endpoint (%s)", msg.Uris[0])
+		return
+	}
 
 	for _, uri := range msg.Uris {
 		f.routes.UnregisterRoute(uri, endpoint)

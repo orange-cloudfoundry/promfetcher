@@ -98,7 +98,7 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string, onl
 						wg.Done()
 						continue
 					}
-					log.Debugf("Cannot get metric for instance %s for instance id %s (%s/%s/%s)", j.Address, j.Tags.InstanceID, j.Tags.OrganizationName, j.Tags.SpaceName, j.Tags.AppName)
+					log.Debugf("Cannot get metric for instance %s for instance id %s (%s/%s/%s) : %s", j.Address, j.Tags.InstanceID, j.Tags.OrganizationName, j.Tags.SpaceName, j.Tags.AppName, err)
 					newMetrics = f.scrapeError(j, err)
 					metrics.MetricFetchFailedTotal.With(metrics.RouteToLabel(j)).Inc()
 				} else {

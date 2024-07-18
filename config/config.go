@@ -122,6 +122,7 @@ type Config struct {
 	DisableKeepAlives   bool `yaml:"disable_keep_alives"`
 	MaxIdleConns        int  `yaml:"max_idle_conns,omitempty"`
 	MaxIdleConnsPerHost int  `yaml:"max_idle_conns_per_host,omitempty"`
+	IdleConnTimeout     int  `yaml:"idle_conn_timeout"`
 
 	DbConn                string   `yaml:"db_conn"`
 	SQLCnxMaxIdle         int      `yaml:"sql_cnx_max_idle"`
@@ -150,6 +151,7 @@ var defaultConfig = Config{
 	DisableKeepAlives:           true,
 	MaxIdleConns:                100,
 	MaxIdleConnsPerHost:         2,
+	IdleConnTimeout:             30,
 	SQLCnxMaxIdle:               5,
 	SQLCnxMaxOpen:               10,
 	SQLCnxMaxLife:               "1h",

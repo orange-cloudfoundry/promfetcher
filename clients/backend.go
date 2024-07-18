@@ -31,7 +31,7 @@ func NewBackendFactory(c config.Config) *BackendFactory {
 				}).DialContext,
 				DisableKeepAlives:   c.DisableKeepAlives,
 				MaxIdleConns:        c.MaxIdleConns,
-				IdleConnTimeout:     90 * time.Second, // setting the value to golang default transport
+				IdleConnTimeout:     time.Duration(c.IdleConnTimeout) * time.Second,
 				MaxIdleConnsPerHost: c.MaxIdleConnsPerHost,
 				DisableCompression:  false,
 				TLSClientConfig:     backendTLSConfig,

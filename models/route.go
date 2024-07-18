@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"sync"
 
 	log "github.com/sirupsen/logrus"
 
@@ -12,6 +13,8 @@ import (
 )
 
 const ProcessWeb = "web"
+
+var mu = sync.RWMutex{}
 
 type Routes map[Uri][]*Route
 
@@ -44,6 +47,9 @@ type Route struct {
 }
 
 func (rts Routes) FindByOrgSpaceName(org, space, name string) []*Route {
+	mu.RLock()
+	defer mu.RUnlock()
+
 	finalRoutes := make([]*Route, 0)
 	exist := make(map[string]bool)
 	for u, routes := range rts {
@@ -72,6 +78,9 @@ func (rts Routes) FindByOrgSpaceName(org, space, name string) []*Route {
 }
 
 func (rts Routes) FindById(appId string) []*Route {
+	mu.RLock()
+	defer mu.RUnlock()
+
 	finalRoutes := make([]*Route, 0)
 	exist := make(map[string]bool)
 	for u, routes := range rts {
@@ -98,6 +107,9 @@ func (rts Routes) FindById(appId string) []*Route {
 }
 
 func (rts Routes) FindByRouteName(routeName string) []*Route {
+	mu.RLock()
+	defer mu.RUnlock()
+
 	routeKey := Uri(routeName).RouteKey()
 	finalRoutes, ok := rts[routeKey]
 	if !ok {
@@ -124,6 +136,9 @@ func (rts Routes) Find(appIdOrPathOrName string) []*Route {
 }
 
 func (rts Routes) RegisterRoute(uri Uri, route *Route) {
+	mu.Lock()
+	defer mu.Unlock()
+
 	if route == nil {
 		log.Warn("Cannot register nil route")
 		return
@@ -134,7 +149,7 @@ func (rts Routes) RegisterRoute(uri Uri, route *Route) {
 	if ok {
 		found := false
 		for idx, r := range routes {
-			if route.Equal(r) {
+			if route.NeedUpdate(r) {
 				found = true
 				// route is updated
 				log.Debugf("update route for uri %s and instance %s", string(uri), route.Tags.InstanceID)
@@ -157,6 +172,9 @@ func (rts Routes) RegisterRoute(uri Uri, route *Route) {
 }
 
 func (rts Routes) UnregisterRoute(uri Uri, route *Route) {
+	mu.Lock()
+	defer mu.Unlock()
+
 	if route == nil {
 		log.Warn("Cannot unregister nil route")
 		return
@@ -183,6 +201,9 @@ func (rts Routes) UnregisterRoute(uri Uri, route *Route) {
 }
 
 func (rts Routes) String() string {
+	mu.RLock()
+	defer mu.RUnlock()
+
 	finalStr := "{"
 	for u, routes := range rts {
 		finalStr += fmt.Sprintf("\"%s\": [", u)
@@ -210,4 +231,17 @@ func (r *Route) Equal(r2 *Route) bool {
 		r.Host == r2.Host &&
 		r.Tags.InstanceID == r2.Tags.InstanceID &&
 		r.Tags.ProcessInstanceID == r2.Tags.ProcessInstanceID
+}
+
+func (r *Route) NeedUpdate(r2 *Route) bool {
+	if r2 == nil {
+		return false
+	}
+
+	return r.Equal(r2) && (r.Tags.AppID != r2.Tags.AppID ||
+		r.Tags.AppName != r2.Tags.AppName ||
+		r.Tags.OrganizationID != r2.Tags.OrganizationID ||
+		r.Tags.OrganizationName != r2.Tags.OrganizationName ||
+		r.Tags.SpaceID != r2.Tags.SpaceID ||
+		r.Tags.SpaceName != r2.Tags.SpaceName)
 }
