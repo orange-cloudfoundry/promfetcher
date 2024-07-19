@@ -149,13 +149,15 @@ func (rts Routes) RegisterRoute(uri Uri, route *Route) {
 	if ok {
 		found := false
 		for idx, r := range routes {
-			if route.NeedUpdate(r) {
+			if route.Equal(r) {
 				found = true
-				// route is updated
-				log.Debugf("update route for uri %s and instance %s", string(uri), route.Tags.InstanceID)
-				routes[idx] = route
-				rts[routekey] = routes
-				break
+				if route.NeedUpdate(r) {
+					// route is updated
+					log.Debugf("update route for uri %s and instance %s", string(uri), route.Tags.InstanceID)
+					routes[idx] = route
+					rts[routekey] = routes
+					break
+				}
 			}
 		}
 		if !found {
@@ -238,10 +240,10 @@ func (r *Route) NeedUpdate(r2 *Route) bool {
 		return false
 	}
 
-	return r.Equal(r2) && (r.Tags.AppID != r2.Tags.AppID ||
+	return r.Tags.AppID != r2.Tags.AppID ||
 		r.Tags.AppName != r2.Tags.AppName ||
 		r.Tags.OrganizationID != r2.Tags.OrganizationID ||
 		r.Tags.OrganizationName != r2.Tags.OrganizationName ||
 		r.Tags.SpaceID != r2.Tags.SpaceID ||
-		r.Tags.SpaceName != r2.Tags.SpaceName)
+		r.Tags.SpaceName != r2.Tags.SpaceName
 }
