@@ -1,13 +1,11 @@
 module github.com/orange-cloudfoundry/promfetcher
 
-go 1.22
-
-toolchain go1.22.6
+go 1.22.6
 
 require (
 	code.cloudfoundry.org/gorouter v0.0.0-20240821054628-6823517e5f74
 	code.cloudfoundry.org/lager v2.0.0+incompatible
-	code.cloudfoundry.org/localip v0.2.0
+	code.cloudfoundry.org/localip v0.3.0
 	code.cloudfoundry.org/tlsconfig v0.1.0
 	github.com/alecthomas/kingpin/v2 v2.4.0
 	github.com/google/uuid v1.6.0
@@ -19,7 +17,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.20.1
 	github.com/onsi/gomega v1.34.1
 	github.com/pivotal-cf/brokerapi/v7 v7.5.0
-	github.com/prometheus/client_golang v1.20.1
+	github.com/prometheus/client_golang v1.20.2
 	github.com/prometheus/client_model v0.6.1
 	github.com/prometheus/common v0.55.0
 	github.com/russross/blackfriday/v2 v2.1.0
