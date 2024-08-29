@@ -5,7 +5,7 @@ go 1.22.6
 require (
 	code.cloudfoundry.org/gorouter v0.0.0-20240821054628-6823517e5f74
 	code.cloudfoundry.org/lager v2.0.0+incompatible
-	code.cloudfoundry.org/localip v0.4.0
+	code.cloudfoundry.org/localip v0.5.0
 	code.cloudfoundry.org/tlsconfig v0.1.0
 	github.com/alecthomas/kingpin/v2 v2.4.0
 	github.com/google/uuid v1.6.0
