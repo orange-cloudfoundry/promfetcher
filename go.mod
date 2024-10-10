@@ -1,6 +1,7 @@
 module github.com/orange-cloudfoundry/promfetcher
 
 go 1.22.6
+toolchain go1.23.2
 
 require (
 	code.cloudfoundry.org/gorouter v0.0.0-20240821054628-6823517e5f74
@@ -12,7 +13,7 @@ require (
 	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.1
 	github.com/jinzhu/gorm v1.9.16
-	github.com/maxbrunsfeld/counterfeiter/v6 v6.9.0
+	github.com/maxbrunsfeld/counterfeiter/v6 v6.10.0
 	github.com/nats-io/nats.go v1.37.0
 	github.com/onsi/ginkgo/v2 v2.20.2
 	github.com/onsi/gomega v1.34.2
