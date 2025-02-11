@@ -5,7 +5,7 @@ go 1.23.4
 require (
 	code.cloudfoundry.org/gorouter v0.0.0-20241217161006-2dd96da8dc9a
 	code.cloudfoundry.org/lager v2.0.0+incompatible
-	code.cloudfoundry.org/localip v0.29.0
+	code.cloudfoundry.org/localip v0.30.0
 	code.cloudfoundry.org/tlsconfig v0.17.0
 	github.com/alecthomas/kingpin/v2 v2.4.0
 	github.com/google/uuid v1.6.0
@@ -37,7 +37,7 @@ require (
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
-	github.com/google/pprof v0.0.0-20250202011525-fc3143867406 // indirect
+	github.com/google/pprof v0.0.0-20250208200701-d0013a598941 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.1 // indirect
 	github.com/klauspost/compress v1.17.11 // indirect
@@ -53,12 +53,12 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/xhit/go-str2duration/v2 v2.1.0 // indirect
-	golang.org/x/crypto v0.32.0 // indirect
-	golang.org/x/mod v0.22.0 // indirect
-	golang.org/x/net v0.34.0 // indirect
+	golang.org/x/crypto v0.33.0 // indirect
+	golang.org/x/mod v0.23.0 // indirect
+	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
-	golang.org/x/tools v0.29.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/tools v0.30.0 // indirect
 	google.golang.org/protobuf v1.36.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
