@@ -4,7 +4,7 @@ code.cloudfoundry.org/gorouter/common/uuid
 # code.cloudfoundry.org/lager v2.0.0+incompatible
 ## explicit
 code.cloudfoundry.org/lager
-# code.cloudfoundry.org/localip v0.34.0
+# code.cloudfoundry.org/localip v0.35.0
 ## explicit; go 1.23.0
 code.cloudfoundry.org/localip
 # code.cloudfoundry.org/tlsconfig v0.23.0
@@ -213,7 +213,7 @@ golang.org/x/crypto/salsa20/salsa
 golang.org/x/mod/internal/lazyregexp
 golang.org/x/mod/module
 golang.org/x/mod/semver
-# golang.org/x/net v0.37.0
+# golang.org/x/net v0.38.0
 ## explicit; go 1.23.0
 golang.org/x/net/html
 golang.org/x/net/html/atom
