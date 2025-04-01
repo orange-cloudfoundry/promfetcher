@@ -1,14 +1,13 @@
 module github.com/orange-cloudfoundry/promfetcher
 
 go 1.23.4
-
 toolchain go1.24.1
 
 require (
 	code.cloudfoundry.org/gorouter v0.0.0-20241217161006-2dd96da8dc9a
 	code.cloudfoundry.org/lager v2.0.0+incompatible
 	code.cloudfoundry.org/localip v0.34.0
-	code.cloudfoundry.org/tlsconfig v0.22.0
+	code.cloudfoundry.org/tlsconfig v0.23.0
 	github.com/alecthomas/kingpin/v2 v2.4.0
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/handlers v1.5.2
