@@ -4,7 +4,7 @@ code.cloudfoundry.org/gorouter/common/uuid
 # code.cloudfoundry.org/lager v2.0.0+incompatible
 ## explicit
 code.cloudfoundry.org/lager
-# code.cloudfoundry.org/localip v0.36.0
+# code.cloudfoundry.org/localip v0.37.0
 ## explicit; go 1.23.0
 code.cloudfoundry.org/localip
 # code.cloudfoundry.org/tlsconfig v0.24.0
@@ -248,7 +248,7 @@ golang.org/x/text/language
 golang.org/x/text/runes
 golang.org/x/text/transform
 golang.org/x/text/unicode/norm
-# golang.org/x/tools v0.31.0
+# golang.org/x/tools v0.32.0
 ## explicit; go 1.23.0
 golang.org/x/tools/cover
 golang.org/x/tools/go/ast/astutil

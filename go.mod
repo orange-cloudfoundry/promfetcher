@@ -7,7 +7,7 @@ toolchain go1.24.1
 require (
 	code.cloudfoundry.org/gorouter v0.0.0-20241217161006-2dd96da8dc9a
 	code.cloudfoundry.org/lager v2.0.0+incompatible
-	code.cloudfoundry.org/localip v0.36.0
+	code.cloudfoundry.org/localip v0.37.0
 	code.cloudfoundry.org/tlsconfig v0.24.0
 	github.com/alecthomas/kingpin/v2 v2.4.0
 	github.com/google/uuid v1.6.0
@@ -61,7 +61,7 @@ require (
 	golang.org/x/net v0.39.0 // indirect
 	golang.org/x/sync v0.13.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect
-	golang.org/x/tools v0.31.0 // indirect
+	golang.org/x/tools v0.32.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
