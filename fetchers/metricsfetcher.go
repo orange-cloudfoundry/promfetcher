@@ -74,7 +74,7 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string, onl
 					log.WithField("external_exporter", ee.Name).
 						WithField("action", "route convert").
 						WithField("app", fmt.Sprintf("%s/%s/%s", tags.OrganizationName, tags.SpaceName, tags.AppName)).
-						Warningf(err.Error())
+						Warningf("error : %s", err.Error())
 					continue
 				}
 				routes = append(routes, routeExternalExporter)

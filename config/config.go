@@ -170,7 +170,7 @@ func (c *Config) Process() error {
 		certificate, err := tls.X509KeyPair([]byte(c.Backends.CertChain), []byte(c.Backends.PrivateKey))
 		if err != nil {
 			errMsg := fmt.Sprintf("Error loading key pair: %s", err.Error())
-			return fmt.Errorf(errMsg)
+			return fmt.Errorf("error: %s", errMsg)
 		}
 		c.Backends.ClientAuthCertificate = certificate
 	}
@@ -179,7 +179,7 @@ func (c *Config) Process() error {
 		certificate, err := tls.X509KeyPair([]byte(c.Nats.CertChain), []byte(c.Nats.PrivateKey))
 		if err != nil {
 			errMsg := fmt.Sprintf("Error loading NATS key pair: %s", err.Error())
-			return fmt.Errorf(errMsg)
+			return fmt.Errorf("error: %s", errMsg)
 		}
 		c.Nats.ClientAuthCertificate = certificate
 
@@ -198,7 +198,7 @@ func (c *Config) Process() error {
 		certificate, err := tls.X509KeyPair([]byte(c.TLSPEM.CertChain), []byte(c.TLSPEM.PrivateKey))
 		if err != nil {
 			errMsg := fmt.Sprintf("Error loading key pair: %s", err.Error())
-			return fmt.Errorf(errMsg)
+			return fmt.Errorf("error: %s", errMsg)
 		}
 		c.SSLCertificate = certificate
 	}
