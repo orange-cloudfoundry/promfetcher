@@ -6,7 +6,7 @@ require (
 	code.cloudfoundry.org/gorouter v0.0.0-20250414175435-85f72a08aa68
 	code.cloudfoundry.org/lager v2.0.0+incompatible
 	code.cloudfoundry.org/localip v0.38.0
-	code.cloudfoundry.org/tlsconfig v0.24.0
+	code.cloudfoundry.org/tlsconfig v0.25.0
 	github.com/alecthomas/kingpin/v2 v2.4.0
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/handlers v1.5.2
