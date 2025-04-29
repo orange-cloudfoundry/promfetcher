@@ -5,7 +5,7 @@ go 1.24.1
 require (
 	code.cloudfoundry.org/gorouter v0.0.0-20250414175435-85f72a08aa68
 	code.cloudfoundry.org/lager v2.0.0+incompatible
-	code.cloudfoundry.org/localip v0.38.0
+	code.cloudfoundry.org/localip v0.39.0
 	code.cloudfoundry.org/tlsconfig v0.25.0
 	github.com/alecthomas/kingpin/v2 v2.4.0
 	github.com/google/uuid v1.6.0
@@ -37,7 +37,7 @@ require (
 	github.com/go-sql-driver/mysql v1.9.2 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
-	github.com/google/pprof v0.0.0-20250418163039-24c5476c6587 // indirect
+	github.com/google/pprof v0.0.0-20250423184734-337e5dd93bb4 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.1 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
