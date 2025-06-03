@@ -4,7 +4,7 @@ code.cloudfoundry.org/gorouter/common/uuid
 # code.cloudfoundry.org/lager v2.0.0+incompatible
 ## explicit
 code.cloudfoundry.org/lager
-# code.cloudfoundry.org/localip v0.40.0
+# code.cloudfoundry.org/localip v0.41.0
 ## explicit; go 1.23.0
 code.cloudfoundry.org/localip
 # code.cloudfoundry.org/tlsconfig v0.28.0
@@ -31,7 +31,7 @@ github.com/cespare/xxhash/v2
 github.com/felixge/httpsnoop
 # github.com/fsnotify/fsnotify v1.7.0
 ## explicit; go 1.17
-# github.com/go-logr/logr v1.4.2
+# github.com/go-logr/logr v1.4.3
 ## explicit; go 1.18
 github.com/go-logr/logr
 github.com/go-logr/logr/funcr
@@ -48,7 +48,7 @@ github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
-# github.com/google/pprof v0.0.0-20250501235452-c0086092b71a
+# github.com/google/pprof v0.0.0-20250602020802-c6617b811d0e
 ## explicit; go 1.23.0
 github.com/google/pprof/profile
 # github.com/google/uuid v1.6.0
