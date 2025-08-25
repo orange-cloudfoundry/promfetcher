@@ -98,16 +98,16 @@ func (b Broker) LastOperation(ctx context.Context, instanceID string, details do
 
 func (b Broker) Bind(ctx context.Context, instanceID, bindingID string, details domain.BindDetails, asyncAllowed bool) (domain.Binding, error) {
 	if b.db == nil {
-		return domain.Binding{}, fmt.Errorf("No db set broker unusable")
+		return domain.Binding{}, fmt.Errorf("no db set broker unusable")
 	}
 	var params BrokerParams
 	err := json.Unmarshal(details.RawParameters, &params)
 	if err != nil && len(details.RawParameters) > 0 {
-		return domain.Binding{}, fmt.Errorf("Error when loading params: %s", err.Error())
+		return domain.Binding{}, fmt.Errorf("error when loading params: %s", err.Error())
 	}
 
 	if params.Endpoint != "" && params.Endpoint[0] != '/' {
-		return domain.Binding{}, fmt.Errorf("Endpoint must be a path starting with /")
+		return domain.Binding{}, fmt.Errorf("endpoint must be a path starting with /")
 	}
 
 	b.db.Delete(models.AppEndpoint{}, "app_guid = ?", details.AppGUID)
@@ -121,7 +121,7 @@ func (b Broker) Bind(ctx context.Context, instanceID, bindingID string, details 
 		Endpoint: params.Endpoint,
 	}).Error
 	if err != nil {
-		return domain.Binding{}, fmt.Errorf("Error when getting creating app entry in db: %s", err.Error())
+		return domain.Binding{}, fmt.Errorf("error when getting creating app entry in db: %s", err.Error())
 	}
 	return domain.Binding{}, nil
 }
@@ -137,11 +137,11 @@ func (b Broker) Unbind(ctx context.Context, instanceID, bindingID string, detail
 func (b Broker) GetBinding(ctx context.Context, instanceID, bindingID string) (domain.GetBindingSpec, error) {
 	var appEndpoint models.AppEndpoint
 	if b.db == nil {
-		return domain.GetBindingSpec{}, fmt.Errorf("No db set broker unusable")
+		return domain.GetBindingSpec{}, fmt.Errorf("no db set broker unusable")
 	}
 	err := b.db.First(&appEndpoint, "guid = ?", bindingID).Error
 	if err != nil {
-		return domain.GetBindingSpec{}, fmt.Errorf("Error when getting app in db: %s", err.Error())
+		return domain.GetBindingSpec{}, fmt.Errorf("error when getting app in db: %s", err.Error())
 	}
 	if appEndpoint.GUID == "" {
 		return domain.GetBindingSpec{

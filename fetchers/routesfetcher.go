@@ -259,5 +259,5 @@ func (f *RoutesFetcher) RouteHandler(w http.ResponseWriter, req *http.Request) {
 
 	routes := f.Routes().String()
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(routes))
+	_, _ = w.Write([]byte(routes))
 }

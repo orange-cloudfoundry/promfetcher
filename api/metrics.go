@@ -22,7 +22,7 @@ func (a Api) metrics(w http.ResponseWriter, req *http.Request) {
 	}
 	if appIdOrPathOrName == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf("%d %s: You must set app id or path", http.StatusBadRequest, http.StatusText(http.StatusBadRequest))))
+		fmt.Fprintf(w, "%d %s: You must set app id or path", http.StatusBadRequest, http.StatusText(http.StatusBadRequest))
 		return
 	}
 	metricPathDefault := strings.TrimSpace(req.URL.Query().Get("metric_path"))
@@ -54,17 +54,17 @@ func (a Api) metrics(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		if errFetch, ok := err.(*errors.ErrFetch); ok {
 			w.WriteHeader(errFetch.Code)
-			w.Write([]byte(errFetch.Error()))
+			_, _ = w.Write([]byte(errFetch.Error()))
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Sprintf("%d %s: %s", http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), err.Error())))
+		fmt.Fprintf(w, "%d %s: %s", http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), err.Error())
 		return
 	}
 	w.WriteHeader(http.StatusOK)
 	for _, metric := range metrics {
-		expfmt.MetricFamilyToText(w, metric)
-		w.Write([]byte("\n"))
+		_, _ = expfmt.MetricFamilyToText(w, metric)
+		_, _ = w.Write([]byte("\n"))
 	}
 }
 

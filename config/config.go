@@ -185,14 +185,14 @@ func (c *Config) Process() error {
 
 		certPool := x509.NewCertPool()
 		if ok := certPool.AppendCertsFromPEM([]byte(c.Nats.CACerts)); !ok {
-			return fmt.Errorf("Error while adding CACerts to gorouter's routing-api cert pool: \n%s\n", c.Nats.CACerts)
+			return fmt.Errorf("error while adding CACerts to gorouter's routing-api cert pool: \n%s", c.Nats.CACerts)
 		}
 		c.Nats.CAPool = certPool
 	}
 
 	if c.EnableSSL {
 		if c.TLSPEM.PrivateKey == "" || c.TLSPEM.CertChain == "" {
-			return fmt.Errorf("Error parsing PEM blocks of router.tls_pem, missing cert or key.")
+			return fmt.Errorf("error parsing PEM blocks of router.tls_pem, missing cert or key")
 		}
 
 		certificate, err := tls.X509KeyPair([]byte(c.TLSPEM.CertChain), []byte(c.TLSPEM.PrivateKey))
@@ -207,7 +207,7 @@ func (c *Config) Process() error {
 		return err
 	}
 	if err := c.gormDB(); err != nil {
-		return fmt.Errorf("Error on creating db connexion: %s", err.Error())
+		return fmt.Errorf("error on creating db connexion: %s", err.Error())
 	}
 	return nil
 }
@@ -273,7 +273,7 @@ func (c *Config) buildCertPool() error {
 
 	if c.CACerts != "" {
 		if ok := certPool.AppendCertsFromPEM([]byte(c.CACerts)); !ok {
-			return fmt.Errorf("Error while adding CACerts to gorouter's cert pool: \n%s\n", c.CACerts)
+			return fmt.Errorf("error while adding CACerts to gorouter's cert pool: \n%s", c.CACerts)
 		}
 	}
 	c.CAPool = certPool

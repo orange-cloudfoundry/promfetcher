@@ -28,7 +28,7 @@ func (ee *ExternalExporter) UnmarshalYAML(unmarshal func(interface{}) error) err
 		return err
 	}
 	if ee.Host == "" {
-		return fmt.Errorf("Host must be provided on external exporter")
+		return fmt.Errorf("host must be provided on external exporter")
 	}
 	if ee.MetricsPath == "" {
 		ee.MetricsPath = "/metrics"

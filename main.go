@@ -104,17 +104,22 @@ func main() {
 	srv := &http.Server{Handler: rtr}
 
 	go func() {
-		if err = srv.Serve(listener); err != nil && !errors.Is(http.ErrServerClosed, err) {
+		if err = srv.Serve(listener); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
 
 	go func() {
-		if err = http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", c.HealthCheckPort), healthCheck); err != nil && !errors.Is(http.ErrServerClosed, err) {
+		if err = http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", c.HealthCheckPort), healthCheck); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("listen healthcheck: %s\n", err)
 		}
 	}()
-	defer srv.Close()
+	defer func(srv *http.Server) {
+		err := srv.Close()
+		if err != nil {
+			log.Errorf("error closing server: %s", err.Error())
+		}
+	}(srv)
 
 	<-ready
 	healthCheck.SetHealth(healthchecks.Healthy)
