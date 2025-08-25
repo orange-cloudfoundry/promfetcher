@@ -31,14 +31,10 @@ func (t *FactoryRoundTripper) New(expectedServerName string) http.RoundTripper {
 		dialContext = t.Template.DialContext
 	}
 
-	disableKeepAlives := false
-	if t.Template.DisableKeepAlives {
-		disableKeepAlives = true
-	}
-	disableCompression := false
-	if t.Template.DisableCompression {
-		disableCompression = true
-	}
+	disableKeepAlives := t.Template.DisableKeepAlives
+
+	disableCompression := t.Template.DisableCompression
+
 	maxIdleConnsPerHost := 0
 	if t.Template.MaxIdleConnsPerHost != 0 {
 		maxIdleConnsPerHost = t.Template.MaxIdleConnsPerHost

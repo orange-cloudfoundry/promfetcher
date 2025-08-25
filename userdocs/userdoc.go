@@ -54,8 +54,8 @@ func (d UserDoc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}{d.baseUrl})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
-	w.Write(buf.Bytes())
+	_, _ = w.Write(buf.Bytes())
 }

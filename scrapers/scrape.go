@@ -73,7 +73,7 @@ func (s Scraper) Scrape(route *models.Route, metricPathDefault string, headers h
 	req.Header.Set("X-Promfetcher-Scrapping", "true")
 	req.Header.Set("X-Forwarded-For", s.GetOutboundIP())
 	req.Host = route.Host
-	if route.URLParams != nil && len(route.URLParams) > 0 {
+	if len(route.URLParams) > 0 {
 		urlParamsCurrent := req.URL.Query()
 		for key, values := range route.URLParams {
 			urlParamsCurrent[key] = values

@@ -69,6 +69,6 @@ func (h *HealthCheck) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	rw.WriteHeader(http.StatusOK)
-	rw.Write([]byte("ok\n"))
+	_, _ = rw.Write([]byte("ok\n"))
 	r.Close = true
 }

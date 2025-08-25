@@ -65,7 +65,7 @@ func CreateMessage(data []byte) (*Message, error) {
 	}
 
 	if !msg.ValidateMessage() {
-		return nil, errors.New("Unable to validate message. route_service_url must be https")
+		return nil, errors.New("unable to validate message. route_service_url must be https")
 	}
 
 	return &msg, nil

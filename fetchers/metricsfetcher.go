@@ -1,6 +1,7 @@
 package fetchers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"sync"
@@ -11,7 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/orange-cloudfoundry/promfetcher/config"
-	"github.com/orange-cloudfoundry/promfetcher/errors"
+	prom_errrors "github.com/orange-cloudfoundry/promfetcher/errors"
 	"github.com/orange-cloudfoundry/promfetcher/metrics"
 	"github.com/orange-cloudfoundry/promfetcher/models"
 	"github.com/orange-cloudfoundry/promfetcher/scrapers"
@@ -39,14 +40,14 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string, onl
 
 	routes := f.routesFetcher.Routes().Find(appIdOrPathOrName)
 	if len(routes) == 0 {
-		return make(map[string]*dto.MetricFamily), errors.ErrNoAppFound(appIdOrPathOrName)
+		return make(map[string]*dto.MetricFamily), prom_errrors.ErrNoAppFound(appIdOrPathOrName)
 	}
 	mapTagsRoute := make(map[string]models.Tags)
 	for _, rte := range routes {
 		mapTagsRoute[rte.Tags.AppID] = rte.Tags
 	}
 	jobs := make(chan *models.Route, len(routes))
-	errFetch := &errors.ErrFetch{}
+	errFetch := &prom_errrors.ErrFetch{}
 	wg := &sync.WaitGroup{}
 
 	muWrite := sync.Mutex{}
@@ -84,14 +85,15 @@ func (f MetricsFetcher) Metrics(appIdOrPathOrName, metricPathDefault string, onl
 
 	wg.Add(len(routes))
 	for w := 1; w <= 5; w++ {
-		go func(jobs <-chan *models.Route, errFetch *errors.ErrFetch, headers http.Header) {
+		go func(jobs <-chan *models.Route, errFetch *prom_errrors.ErrFetch, headers http.Header) {
 			for j := range jobs {
 				if j.Tags.ProcessType == "external_exporter" {
 					headers = nil
 				}
 				newMetrics, err := f.Metric(j, metricPathDefault, headers)
 				if err != nil {
-					if errF, ok := err.(*errors.ErrFetch); ok && (f.externalExporters == nil || len(f.externalExporters) == 0) {
+					var errF *prom_errrors.ErrFetch
+					if errors.As(err, &errF) && len(f.externalExporters) == 0 {
 						muWrite.Lock()
 						*errFetch = *errF
 						muWrite.Unlock()
@@ -244,7 +246,7 @@ func (f MetricsFetcher) scrapeError(route *models.Route, err error) map[string]*
 	})
 	metric.Inc()
 	var dtoMetric dto.Metric
-	metric.Write(&dtoMetric)
+	_ = metric.Write(&dtoMetric)
 	metricType := dto.MetricType_COUNTER
 	return map[string]*dto.MetricFamily{
 		"promfetcher_scrape_error": {
@@ -278,7 +280,7 @@ func (f MetricsFetcher) scrapeExternalExporterError(tags models.Tags, externalEx
 	})
 	metric.Inc()
 	var dtoMetric dto.Metric
-	metric.Write(&dtoMetric)
+	_ = metric.Write(&dtoMetric)
 	metricType := dto.MetricType_COUNTER
 	return map[string]*dto.MetricFamily{
 		"promfetcher_scrape_external_exporter_error": {
