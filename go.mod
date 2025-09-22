@@ -13,7 +13,7 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/jinzhu/gorm v1.9.16
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.12.0
-	github.com/nats-io/nats.go v1.45.0
+	github.com/nats-io/nats.go v1.46.0
 	github.com/onsi/ginkgo/v2 v2.25.3
 	github.com/onsi/gomega v1.38.2
 	github.com/pivotal-cf/brokerapi/v7 v7.5.0
