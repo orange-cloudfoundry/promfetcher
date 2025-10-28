@@ -3,8 +3,8 @@ code.cloudfoundry.org/gorouter v0.0.0-20250429140807-a602bb6a6243/go.mod h1:hUba
 code.cloudfoundry.org/lager v1.1.1-0.20191008172124-a9afc05ee5be/go.mod h1:O2sS7gKP3HM2iemG+EnwvyNQK7pTSC6Foi4QiMp9sSk=
 code.cloudfoundry.org/lager v2.0.0+incompatible h1:WZwDKDB2PLd/oL+USK4b4aEjUymIej9My2nUQ9oWEwQ=
 code.cloudfoundry.org/lager v2.0.0+incompatible/go.mod h1:O2sS7gKP3HM2iemG+EnwvyNQK7pTSC6Foi4QiMp9sSk=
-code.cloudfoundry.org/localip v0.54.0 h1:vnHcRoFbsl5DycQL8qKTZNj6OwEkx3oL9CLUdCXWh+U=
-code.cloudfoundry.org/localip v0.54.0/go.mod h1:3D3K4PG3cV54tICmP0HwGAA8+f0P+nkFnvEf0muO7uI=
+code.cloudfoundry.org/localip v0.55.0 h1:8L4S5rb6uu7yEc3SXLrnak5Q5yS5sNyOfNKhYpyTWOs=
+code.cloudfoundry.org/localip v0.55.0/go.mod h1:izZmgqlVYpnV2v8uctZDvFY09f+OaiB/nXwF0QCEVhI=
 code.cloudfoundry.org/tlsconfig v0.37.0 h1:dmIkkwHstPvgoJoRtVoSB4Bgdq9CPJ21lIDjGYorw8I=
 code.cloudfoundry.org/tlsconfig v0.37.0/go.mod h1:4PyIxvW8Py/AgQeWU2pSZhPKwVbyxfjPXyQcV8rrW30=
 filippo.io/edwards25519 v1.1.0 h1:FNf4tywRC1HmFuKW5xopWpigGjJKiJSV0Cqo0cJWDaA=
