@@ -5,8 +5,8 @@ code.cloudfoundry.org/lager v2.0.0+incompatible h1:WZwDKDB2PLd/oL+USK4b4aEjUymIe
 code.cloudfoundry.org/lager v2.0.0+incompatible/go.mod h1:O2sS7gKP3HM2iemG+EnwvyNQK7pTSC6Foi4QiMp9sSk=
 code.cloudfoundry.org/localip v0.57.0 h1:s1Rdrwfd6nf2wtXTBFliMW0y76FkHQsIrAOh00H+tOI=
 code.cloudfoundry.org/localip v0.57.0/go.mod h1:QPaYtrqC2Rv1gOxQa9Y3zKwvzn85VJM1I4VBhcPw6AU=
-code.cloudfoundry.org/tlsconfig v0.39.0 h1:MxZHuPbvz6+YL+HcIBKhIgjqiPaX9WP4lIZB96tz9SM=
-code.cloudfoundry.org/tlsconfig v0.39.0/go.mod h1:IsciA/ezoej8RrFdVmwhIg3EnMFbSB2magRqadBvKkE=
+code.cloudfoundry.org/tlsconfig v0.40.0 h1:TwQTN3WgCIH+j0yPXUQQy0jV9Z4FOzTuxaAWAMVd+ZU=
+code.cloudfoundry.org/tlsconfig v0.40.0/go.mod h1:Isd5XjgtHHf/Co2DesnzqEWZZq5Al5+ECU4mg8BZ0Tg=
 filippo.io/edwards25519 v1.1.0 h1:FNf4tywRC1HmFuKW5xopWpigGjJKiJSV0Cqo0cJWDaA=
 filippo.io/edwards25519 v1.1.0/go.mod h1:BxyFTGdWcka3PhytdK4V28tE5sGfRvvvRV7EaN4VDT4=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
