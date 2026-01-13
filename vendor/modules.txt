@@ -7,7 +7,7 @@ code.cloudfoundry.org/lager
 # code.cloudfoundry.org/localip v0.59.0
 ## explicit; go 1.24.9
 code.cloudfoundry.org/localip
-# code.cloudfoundry.org/tlsconfig v0.42.0
+# code.cloudfoundry.org/tlsconfig v0.43.0
 ## explicit; go 1.24.0
 code.cloudfoundry.org/tlsconfig
 # filippo.io/edwards25519 v1.1.0
@@ -204,7 +204,7 @@ go.yaml.in/yaml/v2
 # go.yaml.in/yaml/v3 v3.0.4
 ## explicit; go 1.16
 go.yaml.in/yaml/v3
-# golang.org/x/crypto v0.46.0
+# golang.org/x/crypto v0.47.0
 ## explicit; go 1.24.0
 golang.org/x/crypto/blake2b
 golang.org/x/crypto/curve25519
@@ -226,7 +226,7 @@ golang.org/x/net/html/charset
 # golang.org/x/sync v0.19.0
 ## explicit; go 1.24.0
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.39.0
+# golang.org/x/sys v0.40.0
 ## explicit; go 1.24.0
 golang.org/x/sys/cpu
 golang.org/x/sys/unix
