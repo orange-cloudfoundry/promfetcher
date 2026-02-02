@@ -9,6 +9,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	dto "github.com/prometheus/client_model/go"
 	"github.com/prometheus/common/expfmt"
+	"github.com/prometheus/common/model"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/orange-cloudfoundry/promfetcher/config"
@@ -146,7 +147,7 @@ func (f MetricsFetcher) Metric(route *models.Route, metricPathDefault string, he
 		return nil, err
 	}
 	defer reader.Close()
-	parser := &expfmt.TextParser{}
+	parser := expfmt.NewTextParser(model.UTF8Validation)
 	metricsGroup, err := parser.TextToMetricFamilies(reader)
 	if err != nil {
 		return nil, err
