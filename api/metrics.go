@@ -61,6 +61,7 @@ func (a Api) metrics(w http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(w, "%d %s: %s", http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), err.Error())
 		return
 	}
+	w.Header().Set("Content-Type", "text/plain; version=0.0.4")
 	w.WriteHeader(http.StatusOK)
 	for _, metric := range metrics {
 		_, _ = expfmt.MetricFamilyToText(w, metric)
