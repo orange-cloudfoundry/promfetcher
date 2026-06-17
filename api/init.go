@@ -23,6 +23,8 @@ func Register(rtr *mux.Router, metFetcher *fetchers.MetricsFetcher, routesFetche
 		metFetcher: metFetcher,
 	}
 
+	rtr.Use(AccessLogMiddleware)
+
 	handlerMetrics := handlers.CompressHandler(http.HandlerFunc(api.metrics))
 	handlerOnlyAppMetrics := handlers.CompressHandler(forceOnlyForApp(http.HandlerFunc(api.metrics)))
 
