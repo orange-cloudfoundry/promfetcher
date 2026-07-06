@@ -22,7 +22,7 @@ require (
 	github.com/prometheus/common v0.69.0
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/sirupsen/logrus v1.9.4
-	golang.org/x/text v0.38.0
+	golang.org/x/text v0.39.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
