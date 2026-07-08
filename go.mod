@@ -22,7 +22,7 @@ require (
 	github.com/prometheus/common v0.69.0
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/sirupsen/logrus v1.9.4
-	golang.org/x/text v0.39.0
+	golang.org/x/text v0.40.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -58,7 +58,7 @@ require (
 	golang.org/x/crypto v0.53.0 // indirect
 	golang.org/x/mod v0.37.0 // indirect
 	golang.org/x/net v0.56.0 // indirect
-	golang.org/x/sync v0.21.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/tools v0.47.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
