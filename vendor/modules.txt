@@ -4,7 +4,7 @@ code.cloudfoundry.org/gorouter/common/uuid
 # code.cloudfoundry.org/lager v2.0.0+incompatible
 ## explicit
 code.cloudfoundry.org/lager
-# code.cloudfoundry.org/localip v0.81.0
+# code.cloudfoundry.org/localip v0.82.0
 ## explicit; go 1.25.0
 code.cloudfoundry.org/localip
 # code.cloudfoundry.org/tlsconfig v0.63.0
@@ -205,7 +205,7 @@ github.com/sirupsen/logrus
 # github.com/xhit/go-str2duration/v2 v2.1.0
 ## explicit; go 1.13
 github.com/xhit/go-str2duration/v2
-# go.yaml.in/yaml/v3 v3.0.4
+# go.yaml.in/yaml/v3 v3.0.5
 ## explicit; go 1.16
 go.yaml.in/yaml/v3
 # golang.org/x/crypto v0.54.0
