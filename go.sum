@@ -5,8 +5,8 @@ code.cloudfoundry.org/lager v2.0.0+incompatible h1:WZwDKDB2PLd/oL+USK4b4aEjUymIe
 code.cloudfoundry.org/lager v2.0.0+incompatible/go.mod h1:O2sS7gKP3HM2iemG+EnwvyNQK7pTSC6Foi4QiMp9sSk=
 code.cloudfoundry.org/localip v0.89.0 h1:0/4w4cv7x4Sigh69vb3OkMWP8JBRVxev+I3U63KHMZo=
 code.cloudfoundry.org/localip v0.89.0/go.mod h1:v3V4wsTaRxjHTmVqemJV5ZwNtOlr7OPcsCEABtvxksY=
-code.cloudfoundry.org/tlsconfig v0.67.0 h1:NNlWRHeBrSlTMj8PpcEbU6VaVvtV0F/8KtyIayu1qAQ=
-code.cloudfoundry.org/tlsconfig v0.67.0/go.mod h1:CDv3lTVNMitrFu1zEEENVtmX/mCR4I3oI2Hxb/uhwyE=
+code.cloudfoundry.org/tlsconfig v0.68.0 h1:K6AUYZRTvDXw8Ow0kbygzU5Fn4hAxUBqFkDmL7zXOBA=
+code.cloudfoundry.org/tlsconfig v0.68.0/go.mod h1:XYndqgWUzj6nSsgccdWN4UKhqbm7hT0QJ4NBFk8qjdE=
 filippo.io/edwards25519 v1.2.0 h1:crnVqOiS4jqYleHd9vaKZ+HKtHfllngJIiOpNpoJsjo=
 filippo.io/edwards25519 v1.2.0/go.mod h1:xzAOLCNug/yB62zG1bQ8uziwrIqIuxhctzJT18Q77mc=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
@@ -198,8 +198,8 @@ github.com/tidwall/sjson v1.2.5/go.mod h1:Fvgq9kS/6ociJEDnK0Fk1cpYF4FIW6ZF7LAe+6
 github.com/xhit/go-str2duration/v2 v2.1.0 h1:lxklc02Drh6ynqX+DdPyp5pCKLUQpRT8bp8Ydu2Bstc=
 github.com/xhit/go-str2duration/v2 v2.1.0/go.mod h1:ohY8p+0f07DiV6Em5LKB0s2YpLtXVyJfNt1+BlmyAsU=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
-go.step.sm/crypto v0.90.0 h1:ZEWK0Ly0RyEC2S2OP1+N/SRbTRU+sW7go0tttHgyXkw=
-go.step.sm/crypto v0.90.0/go.mod h1:dgT4uZ4cClpjCi6HZZAmLomgn5tOfpHTqb34lTFN2PQ=
+go.step.sm/crypto v0.91.0 h1:0mN0DwVOvUuh7VbyTnxABZuAkxwak/Grp8Y/b4YaZDU=
+go.step.sm/crypto v0.91.0/go.mod h1:NxxObRBymdbyXLoTCW5Ea6sLxuy5yI/xr9+hSBlbU/Q=
 go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
 go.uber.org/goleak v1.3.0/go.mod h1:CoHD4mav9JJNrW/WLlf7HGZPjdw8EucARQHekz1X6bE=
 go.yaml.in/yaml/v2 v2.4.4 h1:tuyd0P+2Ont/d6e2rl3be67goVK4R6deVxCUX5vyPaQ=
