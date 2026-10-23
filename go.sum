@@ -3,8 +3,8 @@ code.cloudfoundry.org/gorouter v0.0.0-20250429140807-a602bb6a6243/go.mod h1:hUba
 code.cloudfoundry.org/lager v1.1.1-0.20191008172124-a9afc05ee5be/go.mod h1:O2sS7gKP3HM2iemG+EnwvyNQK7pTSC6Foi4QiMp9sSk=
 code.cloudfoundry.org/lager v2.0.0+incompatible h1:WZwDKDB2PLd/oL+USK4b4aEjUymIej9My2nUQ9oWEwQ=
 code.cloudfoundry.org/lager v2.0.0+incompatible/go.mod h1:O2sS7gKP3HM2iemG+EnwvyNQK7pTSC6Foi4QiMp9sSk=
-code.cloudfoundry.org/localip v0.93.0 h1:Of0KlBxvb6yV24zs+tVQ9rfph+Dc0JU/X0xSy3hRho0=
-code.cloudfoundry.org/localip v0.93.0/go.mod h1:SJ2pkrLjlHoMftThFYPgbECVNfruw5xlRgoLrtAGGoI=
+code.cloudfoundry.org/localip v0.94.0 h1:GJL969OcrbR5tOSGdI52Va4Nu5uL+Ln4wJL+/2SoUpc=
+code.cloudfoundry.org/localip v0.94.0/go.mod h1:hj4wafMzC5yKdkbEclW+A6dtdGlaHBxSP3iJZ+H9k4Q=
 code.cloudfoundry.org/tlsconfig v0.69.0 h1:bvlvdU2BKiSEcgeiv0Csomzmq7Gn8vGU4yeNXy5FN2M=
 code.cloudfoundry.org/tlsconfig v0.69.0/go.mod h1:gKv5uSKC6EUgBllA7qDmXPYRz8sJaV3BWpCMsg24R8I=
 filippo.io/edwards25519 v1.2.0 h1:crnVqOiS4jqYleHd9vaKZ+HKtHfllngJIiOpNpoJsjo=
@@ -70,8 +70,8 @@ github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMyw
 github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
 github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
-github.com/google/pprof v0.0.0-20261012231050-2af12c3f4d87 h1:P18JvwDzBYAeC8SIfnee/YJzKk1dysuN6rUwmF6CxZY=
-github.com/google/pprof v0.0.0-20261012231050-2af12c3f4d87/go.mod h1:yUo1AMMpsPIDFGuwDK8nLcf8+vvAd5l2O6JDZ6hpwrM=
+github.com/google/pprof v0.0.0-20261016150608-1facf8f91b50 h1:PlNWJRxu5APSV0pWqfIsZ0qt9OOGHSWfZQ4zvx+WgWs=
+github.com/google/pprof v0.0.0-20261016150608-1facf8f91b50/go.mod h1:yUo1AMMpsPIDFGuwDK8nLcf8+vvAd5l2O6JDZ6hpwrM=
 github.com/google/renameio v0.1.0/go.mod h1:KWCgfxg9yswjAJkECMjeO8J8rahYeXnNhOm40UhjYkI=
 github.com/google/uuid v1.0.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/google/uuid v1.1.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
